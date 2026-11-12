@@ -15,13 +15,13 @@ struct CacheManagementView: View {
     var body: some View {
         ZStack {
             if viewModel.isLoading && viewModel.internalApps.isEmpty && viewModel.resignedApps.isEmpty {
-                ProgressView("Loading Cache...")
+                ProgressView(NSLocalizedString("Loading Cache...", comment: ""))
                     .scaleEffect(1.1)
             } else {
                 List {
-                    Section(header: Text("Internal App Cache"), footer: Text("Cached unzipped app bundles stored in SideStore's private container. These are used during automatic background refreshes and resigns.")) {
+                    Section(header: Text(NSLocalizedString("Internal App Cache", comment: "")), footer: Text(NSLocalizedString("Cached unzipped app bundles stored in SideStore's private container. These are used during automatic background refreshes and resigns.", comment: ""))) {
                         if viewModel.internalApps.isEmpty {
-                            Text("No cached internal apps.")
+                            Text(NSLocalizedString("No cached internal apps.", comment: ""))
                                 .foregroundColor(.secondary)
                                 .italic()
                                 .padding(.vertical, 4)
@@ -42,9 +42,9 @@ struct CacheManagementView: View {
                         }
                     }
                     
-                    Section(header: Text("Exported Resigned Apps"), footer: Text("Copies of signed app bundles exported to your Documents folder. These can be shared or retrieved via the Files app.")) {
+                    Section(header: Text(NSLocalizedString("Exported Resigned Apps", comment: "")), footer: Text(NSLocalizedString("Copies of signed app bundles exported to your Documents folder. These can be shared or retrieved via the Files app.", comment: ""))) {
                         if viewModel.resignedApps.isEmpty {
-                            Text("No exported resigned apps.")
+                            Text(NSLocalizedString("No exported resigned apps.", comment: ""))
                                 .foregroundColor(.secondary)
                                 .italic()
                                 .padding(.vertical, 4)
@@ -85,28 +85,28 @@ struct CacheManagementView: View {
                     .shadow(radius: 10)
             }
         }
-        .navigationTitle("Cache Management")
+        .navigationTitle(NSLocalizedString("Cache Management", comment: ""))
         .onAppear {
             viewModel.loadCacheItems()
         }
         .alert(isPresented: $viewModel.showErrorAlert) {
             Alert(
-                title: Text("Error"),
-                message: Text(viewModel.errorMessage ?? "An unknown error occurred."),
-                dismissButton: .default(Text("OK"))
+                title: Text(NSLocalizedString("Error", comment: "")),
+                message: Text(viewModel.errorMessage ?? NSLocalizedString("An unknown error occurred.", comment: "")),
+                dismissButton: .default(Text(NSLocalizedString("OK", comment: "")))
             )
         }
         .alert(isPresented: $viewModel.showDeleteAlert) {
-            let appName = viewModel.itemToDelete?.name ?? "this app"
+            let appName = viewModel.itemToDelete?.name ?? NSLocalizedString("this app", comment: "")
             return Alert(
-                title: Text("Delete Cached App?"),
-                message: Text("If deleted, SideStore will require the original IPA file during reinstall, backup, resign, or refresh procedures. Are you sure you want to delete the cached app bundle for “\(appName)” ?"),
-                primaryButton: .destructive(Text("Delete")) {
+                title: Text(NSLocalizedString("Delete Cached App?", comment: "")),
+                message: Text(String(format: NSLocalizedString("If deleted, SideStore will require the original IPA file during reinstall, backup, resign, or refresh procedures. Are you sure you want to delete the cached app bundle for “%@” ?", comment: ""), appName)),
+                primaryButton: .destructive(Text(NSLocalizedString("Delete", comment: ""))) {
                     if let item = viewModel.itemToDelete {
                         viewModel.deleteItem(item)
                     }
                 },
-                secondaryButton: .cancel {
+                secondaryButton: .cancel(Text(NSLocalizedString("Cancel", comment: ""))) {
                     viewModel.itemToDelete = nil
                 }
             )
@@ -173,10 +173,10 @@ struct CacheItemRow: View {
         .padding(.vertical, 4)
         .contextMenu {
             SwiftUI.Button(action: onExport) {
-                Label("Export/Share", systemImage: "square.and.arrow.up")
+                Label(NSLocalizedString("Export/Share", comment: ""), systemImage: "square.and.arrow.up")
             }
             SwiftUI.Button(role: .destructive, action: onDelete) {
-                Label("Delete Cache", systemImage: "trash")
+                Label(NSLocalizedString("Delete Cache", comment: ""), systemImage: "trash")
             }
         }
     }

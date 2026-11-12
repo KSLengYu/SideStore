@@ -156,11 +156,17 @@ class MyAppsViewController: UICollectionViewController
         Task { @MainActor [weak self] in
             self?.activeTeam = try? await AuthManager.shared.getAuthenticatedTeam()
         }
+        
+        self.title = NSLocalizedString("My Apps", comment: "")
+        self.navigationItem.title = NSLocalizedString("My Apps", comment: "")
     }
     
     override func viewIsAppearing(_ animated: Bool)
     {
         super.viewIsAppearing(animated)
+        
+        self.title = NSLocalizedString("My Apps", comment: "")
+        self.navigationItem.title = NSLocalizedString("My Apps", comment: "")
         
         Task { @MainActor [weak self] in
             guard let self = self else { return }

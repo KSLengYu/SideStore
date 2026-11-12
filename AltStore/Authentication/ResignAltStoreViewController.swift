@@ -23,6 +23,8 @@ final class ResignAltStoreViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        self.title = NSLocalizedString("Resign SideStore", comment: "")
+        self.navigationItem.title = NSLocalizedString("Resign SideStore", comment: "")
         
         self.placeholderView.textLabel.isHidden = true
         

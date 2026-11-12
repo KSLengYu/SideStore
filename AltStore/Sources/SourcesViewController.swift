@@ -50,7 +50,8 @@ final class SourcesViewController: UICollectionViewController
         #endif
 
         // Set title
-        navigationItem.title = "Sources"
+        self.title = NSLocalizedString("Sources", comment: "")
+        navigationItem.title = NSLocalizedString("Sources", comment: "")
         navigationController?.navigationBar.layoutMargins.left = 20
         
         let layout = self.makeLayout()
@@ -73,13 +74,13 @@ final class SourcesViewController: UICollectionViewController
         self.placeholderView.translatesAutoresizingMaskIntoConstraints = false
         self.placeholderView.textLabel.text = NSLocalizedString("Add More Sources!", comment: "")
         self.placeholderView.detailTextLabel.text = NSLocalizedString("Sources determine what apps are available in SideStore. The more sources you add, the better your SideStore experience will be.\n\nDon’t know where to start? Try adding one of our Recommended Sources!", comment: "")
-        self.placeholderView.detailTextLabel.textAlignment = .natural
+        self.placeholderView.detailTextLabel.textAlignment = .center
         backgroundView.addSubview(self.placeholderView)
         
         let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title3).bolded()
         self.placeholderView.textLabel.font = UIFont(descriptor: fontDescriptor, size: 0.0)
         self.placeholderView.detailTextLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        self.placeholderView.detailTextLabel.textAlignment = .natural
+        self.placeholderView.detailTextLabel.textAlignment = .center
         
         self.placeholderViewButton = UIButton(type: .system, primaryAction: UIAction(title: NSLocalizedString("View Recommended Sources", comment: "")) { [weak self] _ in
             self?.performSegue(withIdentifier: "addSource", sender: nil)
@@ -107,6 +108,13 @@ final class SourcesViewController: UICollectionViewController
         NotificationCenter.default.addObserver(self, selector: #selector(SourcesViewController.showInstallingAppToastView(_:)), name: AppManager.willInstallAppFromNewSourceNotification, object: nil)
         
         self.update()
+    }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        self.title = NSLocalizedString("Sources", comment: "")
+        self.navigationItem.title = NSLocalizedString("Sources", comment: "")
     }
     
     override func viewDidAppear(_ animated: Bool)

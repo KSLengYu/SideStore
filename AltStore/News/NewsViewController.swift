@@ -79,6 +79,11 @@ class NewsViewController: UICollectionViewController
     {
         super.viewDidLoad()
         
+        if self.source == nil {
+            self.title = NSLocalizedString("News", comment: "")
+            self.navigationItem.title = NSLocalizedString("News", comment: "")
+        }
+        
         self.collectionView.backgroundColor = .altBackground
         
         self.prototypeCell = NewsCollectionViewCell.instantiate(with: NewsCollectionViewCell.nib)
@@ -134,6 +139,17 @@ class NewsViewController: UICollectionViewController
         }
         
         self.preparePipeline()
+        self.update()
+    }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        
+        if self.source == nil {
+            self.title = NSLocalizedString("News", comment: "")
+            self.navigationItem.title = NSLocalizedString("News", comment: "")
+        }
         self.update()
     }
     

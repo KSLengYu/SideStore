@@ -47,6 +47,23 @@ final class TabBarController: UITabBarController
         
         let sourcesNavigationController = self.viewControllers![Tab.sources.rawValue] as! UINavigationController
         self.sourcesViewController = sourcesNavigationController.viewControllers.first as? SourcesViewController
+        
+        self.updateTabBarItemTitles()
+    }
+    
+    @objc public func updateTabBarItemTitles() {
+        let tabTitles: [Tab: String] = [
+            .news: NSLocalizedString("News", comment: ""),
+            .sources: NSLocalizedString("Sources", comment: ""),
+            .browse: NSLocalizedString("Browse", comment: ""),
+            .myApps: NSLocalizedString("My Apps", comment: ""),
+            .settings: NSLocalizedString("Settings", comment: "")
+        ]
+        for (tab, title) in tabTitles {
+            if let vcs = self.viewControllers, tab.rawValue < vcs.count {
+                vcs[tab.rawValue].tabBarItem.title = title
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool)

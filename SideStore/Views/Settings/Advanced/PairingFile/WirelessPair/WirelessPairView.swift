@@ -71,13 +71,13 @@ struct WirelessPairView: View {
                 
                 // Status Info
                 VStack(spacing: 8) {
-                    Text(viewModel.statusText)
+                    Text(NSLocalizedString(viewModel.statusText, comment: ""))
                         .font(.title2)
                         .fontWeight(.bold)
                         .multilineTextAlignment(.center)
                     
                     if viewModel.serviceID == nil {
-                        Text(viewModel.subStatusText)
+                        Text(NSLocalizedString(viewModel.subStatusText, comment: ""))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -303,7 +303,7 @@ struct ConnectionDetailsCard: View {
                     
                     VStack(alignment: .leading, spacing: 0) {
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(label)
+                            Text(NSLocalizedString(label, comment: ""))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             Text(value)
@@ -343,7 +343,7 @@ struct ConnectionDetailsCard: View {
                             UIPasteboard.general.string = value
                             #endif
                         } label: {
-                            Label("Copy \(label)", systemImage: "doc.on.doc")
+                            Label(String(format: NSLocalizedString("Copy %@", comment: ""), NSLocalizedString(label, comment: "")), systemImage: "doc.on.doc")
                         }
                     }
                 }

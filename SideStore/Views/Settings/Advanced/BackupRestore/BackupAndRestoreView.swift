@@ -26,7 +26,7 @@ struct BackupAndRestoreView: View {
             VStack(alignment: .leading, spacing: 24) {
                 // Section 1: Account, Certificate, & Pairing Data
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("ACCOUNT, CERTIFICATE, & PAIRING DATA")
+                    Text(NSLocalizedString("ACCOUNT, CERTIFICATE, & PAIRING DATA", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -39,7 +39,7 @@ struct BackupAndRestoreView: View {
                                 Image(systemName: "square.and.arrow.down")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Import Account")
+                                Text(NSLocalizedString("Import Account", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -57,7 +57,7 @@ struct BackupAndRestoreView: View {
                                 Image(systemName: "square.and.arrow.up")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Export Account")
+                                Text(NSLocalizedString("Export Account", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -73,7 +73,7 @@ struct BackupAndRestoreView: View {
                 #if DEBUG
                 // Section 2: Sources Data
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("SOURCES DATA")
+                    Text(NSLocalizedString("SOURCES DATA", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -86,7 +86,7 @@ struct BackupAndRestoreView: View {
                                 Image(systemName: "square.and.arrow.down")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Import Sources")
+                                Text(NSLocalizedString("Import Sources", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -104,7 +104,7 @@ struct BackupAndRestoreView: View {
                                 Image(systemName: "square.and.arrow.up")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Export Sources")
+                                Text(NSLocalizedString("Export Sources", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -123,7 +123,7 @@ struct BackupAndRestoreView: View {
             .padding(.bottom, 32)
         }
         .background(Color(uiColor: .settingsBackground).ignoresSafeArea())
-        .navigationTitle("Backup & Restore")
+        .navigationTitle(NSLocalizedString("Backup & Restore", comment: ""))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
@@ -138,34 +138,34 @@ struct BackupAndRestoreView: View {
                     self.importFilePassword = ""
                     self.showingImportPasswordAlert = true
                 } catch {
-                    showAlert(title: "Import Error", message: error.localizedDescription)
+                    showAlert(title: NSLocalizedString("Import Error", comment: ""), message: error.localizedDescription)
                 }
             }
         }
-        .alert("Decrypt Backup", isPresented: $showingImportPasswordAlert) {
-            SecureField("File Password", text: $importFilePassword)
-            SwiftUI.Button("Decrypt") {
+        .alert(NSLocalizedString("Decrypt Backup", comment: ""), isPresented: $showingImportPasswordAlert) {
+            SecureField(NSLocalizedString("File Password", comment: ""), text: $importFilePassword)
+            SwiftUI.Button(NSLocalizedString("Decrypt", comment: "")) {
                 performImportDecrypt()
             }
-            SwiftUI.Button("Cancel", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
         } message: {
-            Text("Enter the password used to encrypt this backup file.")
+            Text(NSLocalizedString("Enter the password used to encrypt this backup file.", comment: ""))
         }
-        .alert("Apple ID Password", isPresented: $showingApplePasswordAlert) {
-            SecureField("Password", text: $applePasswordInput)
-            SwiftUI.Button("Sign In") {
+        .alert(NSLocalizedString("Apple ID Password", comment: ""), isPresented: $showingApplePasswordAlert) {
+            SecureField(NSLocalizedString("Password", comment: ""), text: $applePasswordInput)
+            SwiftUI.Button(NSLocalizedString("Sign In", comment: "")) {
                 performAppleSignIn()
             }
-            SwiftUI.Button("Cancel", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
         } message: {
             if let email = importedAccount?.email {
-                Text("Please enter Apple ID password for \(email) to complete sign-in.")
+                Text(String(format: NSLocalizedString("Please enter Apple ID password for %@ to complete sign-in.", comment: ""), email))
             } else {
-                Text("Please enter your Apple ID password to complete sign-in.")
+                Text(NSLocalizedString("Please enter your Apple ID password to complete sign-in.", comment: ""))
             }
         }
         .alert(alertTitle, isPresented: $showingMessageAlert) {
-            SwiftUI.Button("OK", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("OK", comment: ""), role: .cancel) {}
         } message: {
             Text(alertMessage)
         }
@@ -203,7 +203,7 @@ struct BackupAndRestoreView: View {
             let includeApplePassword = alertVC.isIncludePasswordChecked
             
             guard !filePassword.isEmpty else {
-                showAlert(title: "Export Error", message: "File password cannot be empty.")
+                showAlert(title: NSLocalizedString("Export Error", comment: ""), message: NSLocalizedString("File password cannot be empty.", comment: ""))
                 return
             }
             
@@ -219,7 +219,7 @@ struct BackupAndRestoreView: View {
                     self.exportFileURL = fileURL
                 }
             } catch {
-                showAlert(title: "Export Error", message: error.localizedDescription)
+                showAlert(title: NSLocalizedString("Export Error", comment: ""), message: error.localizedDescription)
             }
         }
         
@@ -239,13 +239,13 @@ struct BackupAndRestoreView: View {
                 self.importedAccount = account
                 
                 if let pass = account.password, !pass.isEmpty {
-                    showAlert(title: "Account Imported", message: "Account \(account.email) imported successfully!")
+                    showAlert(title: NSLocalizedString("Account Imported", comment: ""), message: String(format: NSLocalizedString("Account %@ imported successfully!", comment: ""), account.email))
                 } else {
                     self.applePasswordInput = ""
                     self.showingApplePasswordAlert = true
                 }
             } catch {
-                showAlert(title: "Import Error", message: error.localizedDescription)
+                showAlert(title: NSLocalizedString("Import Error", comment: ""), message: error.localizedDescription)
             }
         }
     }
@@ -253,7 +253,7 @@ struct BackupAndRestoreView: View {
     private func performAppleSignIn() {
         guard let account = importedAccount, !applePasswordInput.isEmpty else { return }
         AuthManager.shared.password = applePasswordInput
-        showAlert(title: "Account Imported", message: "Account \(account.email) imported successfully!")
+        showAlert(title: NSLocalizedString("Account Imported", comment: ""), message: String(format: NSLocalizedString("Account %@ imported successfully!", comment: ""), account.email))
     }
 
     private func showAlert(title: String, message: String) {

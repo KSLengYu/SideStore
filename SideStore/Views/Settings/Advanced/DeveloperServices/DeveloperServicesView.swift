@@ -21,7 +21,7 @@ struct DeveloperServicesView: View {
         ZStack {
             List {
                 if let team = viewModel.team {
-                    Section(header: Text("Developer Account")) {
+                    Section(header: Text(NSLocalizedString("Developer Account", comment: ""))) {
                         HStack(spacing: 12) {
                             Image(systemName: "person.crop.circle.fill")
                                 .font(.system(size: 36))
@@ -30,14 +30,14 @@ struct DeveloperServicesView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(team.name)
                                     .font(.headline)
-                                Text("Team ID: \(team.identifier)")
+                                Text(String(format: NSLocalizedString("Team ID: %@", comment: ""), team.identifier))
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
 
                             Spacer()
 
-                            Text(team.type.displayName)
+                            Text(NSLocalizedString(team.type.displayName, comment: ""))
                                 .font(.caption)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
@@ -49,7 +49,7 @@ struct DeveloperServicesView: View {
                     }
                 }
 
-                Section(header: Text("Developer Portal Services")) {
+                Section(header: Text(NSLocalizedString("Developer Portal Services", comment: ""))) {
                     NavigationLink(destination: AppIDsListView(viewModel: viewModel, presentingViewController: presentingViewController)) {
                         HStack(spacing: 14) {
                             Image(systemName: "app.badge.checkmark")
@@ -58,9 +58,9 @@ struct DeveloperServicesView: View {
                                 .frame(width: 28)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("App IDs")
+                                Text(NSLocalizedString("App IDs", comment: ""))
                                     .font(.body)
-                                Text("\(viewModel.appIDs.count) registered")
+                                Text(String(format: NSLocalizedString("%d registered", comment: ""), viewModel.appIDs.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -76,9 +76,9 @@ struct DeveloperServicesView: View {
                                 .frame(width: 28)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Provisioning Profiles")
+                                Text(NSLocalizedString("Provisioning Profiles", comment: ""))
                                     .font(.body)
-                                Text("\(viewModel.profiles.count) active on portal")
+                                Text(String(format: NSLocalizedString("%d active on portal", comment: ""), viewModel.profiles.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -94,9 +94,9 @@ struct DeveloperServicesView: View {
                                 .frame(width: 28)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Certificates")
+                                Text(NSLocalizedString("Certificates", comment: ""))
                                     .font(.body)
-                                Text("\(viewModel.certificates.count) registered on portal")
+                                Text(String(format: NSLocalizedString("%d registered on portal", comment: ""), viewModel.certificates.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -112,9 +112,9 @@ struct DeveloperServicesView: View {
                                 .frame(width: 28)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("App Groups")
+                                Text(NSLocalizedString("App Groups", comment: ""))
                                     .font(.body)
-                                Text("\(viewModel.appGroups.count) configured")
+                                Text(String(format: NSLocalizedString("%d configured", comment: ""), viewModel.appGroups.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -130,9 +130,9 @@ struct DeveloperServicesView: View {
                                 .frame(width: 28)
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("Registered Devices")
+                                Text(NSLocalizedString("Registered Devices", comment: ""))
                                     .font(.body)
-                                Text("\(viewModel.devices.count) devices")
+                                Text(String(format: NSLocalizedString("%d devices", comment: ""), viewModel.devices.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -150,7 +150,7 @@ struct DeveloperServicesView: View {
             if viewModel.isLoading && viewModel.appIDs.isEmpty && viewModel.profiles.isEmpty {
                 Color.black.opacity(0.15)
                     .edgesIgnoringSafeArea(.all)
-                ProgressView("Connecting to Developer Portal...")
+                ProgressView(NSLocalizedString("Connecting to Developer Portal...", comment: ""))
                     .padding()
                     #if !os(tvOS)
                     .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -161,7 +161,7 @@ struct DeveloperServicesView: View {
                     .shadow(radius: 6)
             }
         }
-        .navigationTitle("Developer Portal")
+        .navigationTitle(NSLocalizedString("Developer Portal", comment: ""))
         .onAppear {
             if viewModel.appIDs.isEmpty && viewModel.profiles.isEmpty {
                 Task {
@@ -174,9 +174,9 @@ struct DeveloperServicesView: View {
         }
         .alert(isPresented: $viewModel.showErrorAlert) {
             Alert(
-                title: Text("Developer Portal Error"),
-                message: Text(viewModel.errorMessage ?? "An unknown error occurred."),
-                dismissButton: .default(Text("OK"))
+                title: Text(NSLocalizedString("Developer Portal Error", comment: "")),
+                message: Text(viewModel.errorMessage ?? NSLocalizedString("An unknown error occurred.", comment: "")),
+                dismissButton: .default(Text(NSLocalizedString("OK", comment: "")))
             )
         }
         .developerServicesToast(viewModel: viewModel)

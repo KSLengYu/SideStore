@@ -134,9 +134,24 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
                 await handler.handleSignInResult(.success((account, session)))
                 
                 self.requiresPostAuthFlow = true
+                await MainActor.run {
+                    AuthManager.consecutiveSignInFailures = 0
+                }
                 return (account, session)
             } catch {
                 self.debugLog("[SignInOperation] authenticationLoop: Attempt failed with error: \(error)")
+                let errorString = "\(error)".lowercased()
+                if AuthManager.isAnisetteOrLoginRecoveryError(error)
+                    || errorString.contains("could not connect to icloud")
+                    || errorString.contains("429")
+                    || errorString.contains("too many requests")
+                    || errorString.contains("503")
+                    || errorString.contains("this action cannot be completed")
+                {
+                    self.debugLog("[SignInOperation] Clearing cached adi.pb after Anisette/GSA error so next attempt provisions cleanly.")
+                    AnisetteConfigManager.shared.anisetteAdiBlob = nil
+                    AnisetteDataManager.shared.clearCache()
+                }
                 await handler.handleSignInResult(.failure(error))
             }
         }
@@ -144,6 +159,7 @@ final class SignInOperation: BaseStandaloneOperation<StandaloneOperationContext,
     
     private func signIn(appleID: String, password: String) async throws -> (ALTAccount, ALTAppleAPISession) {
         self.appleIDEmailAddress = appleID
+        SideSignConfigManager.shared.applyConfigToDeveloperPortal()
         
         let anisetteData = try await self.getAnisetteData()
         let handler = self.signInHandler

@@ -123,7 +123,16 @@ public enum OperationError: LocalizedError, CustomNSError, Sendable, Equatable {
     }
 
     public var failureReason: String? {
-        return NSLocalizedString(self.rawDescription, comment: "")
+        switch self {
+        case .SideJITIssue(let error):
+            return String(format: NSLocalizedString("An error occurred while using SideJIT: %@", comment: ""), error)
+        case .unableToConnectSideJIT:
+            return NSLocalizedString("Unable to connect to SideJITServer. Please check that you are on the same Wi-Fi of and your Firewall has been set correctly on your server.", comment: "")
+        case .unableToRespondSideJITDevice:
+            return NSLocalizedString("SideJITServer is unable to connect to your iDevice. Please make sure you have paired your iDevice by running 'SideJITServer -y', or try refreshing SideJITServer from Settings.", comment: "")
+        default:
+            return NSLocalizedString(self.rawDescription, comment: "")
+        }
     }
 
     public var recoverySuggestion: String? {

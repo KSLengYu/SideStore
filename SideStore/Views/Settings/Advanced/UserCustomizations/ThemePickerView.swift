@@ -173,7 +173,7 @@ struct ThemePickerView: View {
                                 .stroke(Color.white.opacity(0.3), lineWidth: 1)
                         )
 
-                    Text(preset.name)
+                    Text(NSLocalizedString(preset.name, comment: ""))
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.leading, 8)
@@ -251,7 +251,7 @@ struct ThemePickerView: View {
 
     private func metricRow(label: String, value: String) -> some View {
         HStack {
-            Text(label)
+            Text(NSLocalizedString(label, comment: ""))
                 .font(.system(size: 15, weight: .medium))
                 .foregroundColor(Color.white.opacity(0.8))
             Spacer()

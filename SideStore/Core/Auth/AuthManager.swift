@@ -217,3 +217,93 @@ fileprivate extension DatabaseManager {
         }
     }
 }
+
+public extension AuthManager {
+    /// Tracks consecutive sign-in failures within the current session so the recovery alert triggers after 7 failures.
+    @MainActor
+    static var consecutiveSignInFailures: Int = 0
+
+    nonisolated static func isAnisetteOrLoginRecoveryError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        let details = "\(error) \(nsError.userInfo) \(nsError.localizedDescription)".lowercased()
+        return nsError.code == -80045
+            || nsError.code == -80046
+            || nsError.code == -45061
+            || nsError.code == -22421
+            || details.contains("80045")
+            || details.contains("80046")
+            || details.contains("45061")
+            || details.contains("adi.pb")
+            || details.contains("anisette")
+            || details.contains("provisioning failed")
+    }
+
+    @MainActor
+    static func resetAnisetteAndDisableODAForRecovery() async {
+        UserDefaults.standard.useOnDeviceAnisette = false
+        var normalized = UserDefaults.standard.menuAnisetteURL.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        while normalized.hasSuffix("/") {
+            normalized.removeLast()
+        }
+        if normalized.isEmpty || AppConstants.Anisette.Servers.legacyAndroidADIDefaultURLs.contains(normalized) {
+            UserDefaults.standard.menuAnisetteURL = AppConstants.Anisette.Servers.defaultServerURL
+        }
+
+        await AuthManager.shared.signOut(
+            keepCertificate: true,
+            keepAnisetteData: false,
+            keepAnisetteHeaders: true
+        )
+        AnisetteConfigManager.shared.anisetteAdiBlob = nil
+        SideSignConfigManager.shared.applyConfigToDeveloperPortal()
+        consecutiveSignInFailures = 0
+    }
+
+    @MainActor
+    @discardableResult
+    static func recordSignInFailureAndPresentRecoveryIfNeeded(
+        for error: Error,
+        in viewController: UIViewController,
+        onRecoveryApplied: (@MainActor () -> Void)? = nil,
+        onCancel: (() -> Void)? = nil
+    ) -> Bool {
+        consecutiveSignInFailures += 1
+        guard consecutiveSignInFailures >= 7 || isAnisetteOrLoginRecoveryError(error) else {
+            return false
+        }
+
+        let alert = UIAlertController(
+            title: NSLocalizedString("Sign-In Recovery Recommended", comment: ""),
+            message: NSLocalizedString("Multiple Apple ID sign-in failures (or an Anisette / -80045 error) were detected. Turning off On-Device Anisette, switching to a working Mac Anisette server, and resetting adi.pb usually resolves this.\n\nApply this fix now?", comment: ""),
+            preferredStyle: .alert
+        )
+
+        let resetAction = UIAlertAction(
+            title: NSLocalizedString("Disable ODA & Reset adi.pb", comment: ""),
+            style: .destructive
+        ) { [weak viewController] _ in
+            Task { @MainActor in
+                await resetAnisetteAndDisableODAForRecovery()
+                onRecoveryApplied?()
+                if let viewController {
+                    ToastView(
+                        text: NSLocalizedString("Anisette & adi.pb Reset", comment: ""),
+                        detailText: NSLocalizedString("On-Device Anisette has been turned off and adi.pb was cleared. Please sign in again.", comment: "")
+                    ).show(in: viewController)
+                }
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel) { _ in
+            if consecutiveSignInFailures >= 7 {
+                consecutiveSignInFailures = 0
+            }
+            onCancel?()
+        }
+
+        alert.addAction(resetAction)
+        alert.addAction(cancelAction)
+        viewController.present(alert, animated: true)
+        return true
+    }
+}

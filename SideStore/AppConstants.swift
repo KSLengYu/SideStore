@@ -96,7 +96,21 @@ public enum AppConstants {
 
         public enum Servers {
             public static let defaultSource        = "https://servers.sidestore.io/servers.json"
-            public static let defaultServerURL     = "https://ani.sidestore.io"
+            public static let defaultServerURL     = "https://new.ani.sidestore.io"
+            public static let preferredMacADIHosts: [String] = [
+                "new.ani.sidestore.io",
+                "mac-ani.jkcoxson.com",
+                "ani.iloader.app",
+                "ani3.stikstore.app",
+                "ani.jkcoxson.com",
+                "ani2.stikstore.app",
+            ]
+            public static let legacyAndroidADIDefaultURLs: Set<String> = [
+                "https://ani.sidestore.io",
+                "https://ani.sidestore.app",
+                "https://ani.sidestore.zip",
+                "https://ani.846969.xyz",
+            ]
             public static let connectivityCheckURL = URL(string: "https://www.apple.com/library/test/success.html")!
         }
 

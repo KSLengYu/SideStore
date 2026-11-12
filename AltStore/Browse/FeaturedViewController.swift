@@ -67,6 +67,7 @@ class FeaturedViewController: UICollectionViewController
         super.viewDidLoad()
         
         self.title = NSLocalizedString("Browse", comment: "")
+        self.navigationItem.title = NSLocalizedString("Browse", comment: "")
         
         let layout = Self.makeLayout()
         self.collectionView.collectionViewLayout = layout
@@ -103,6 +104,13 @@ class FeaturedViewController: UICollectionViewController
         
         self.navigationItem.largeTitleDisplayMode = .always
         #endif
+    }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        self.title = NSLocalizedString("Browse", comment: "")
+        self.navigationItem.title = NSLocalizedString("Browse", comment: "")
     }
     
     override func viewDidAppear(_ animated: Bool) 

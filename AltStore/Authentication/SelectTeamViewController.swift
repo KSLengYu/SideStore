@@ -22,6 +22,12 @@ final class SelectTeamViewController: UITableViewController
     }
     #endif
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.title = NSLocalizedString("Select a Team", comment: "")
+        self.navigationItem.title = NSLocalizedString("Select a Team", comment: "")
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -38,11 +44,15 @@ final class SelectTeamViewController: UITableViewController
         let cell = tableView.dequeueReusableCell(withIdentifier: "TeamCell", for: indexPath) as! InsetGroupTableViewCell
 
         cell.textLabel?.text = self.teams?[indexPath.row].name
-        cell.detailTextLabel?.text = self.teams?[indexPath.row].type.localizedDescription
-        if indexPath.row == 0
-        {
+        if let typeDesc = self.teams?[indexPath.row].type.localizedDescription {
+            cell.detailTextLabel?.text = NSLocalizedString(typeDesc, comment: "")
+        }
+        let count = self.teams?.count ?? 0
+        if count <= 1 {
+            cell.style = InsetGroupTableViewCell.Style.single
+        } else if indexPath.row == 0 {
             cell.style = InsetGroupTableViewCell.Style.top
-        } else if indexPath.row == self.tableView(self.tableView, numberOfRowsInSection: indexPath.section) - 1 {
+        } else if indexPath.row == count - 1 {
             cell.style = InsetGroupTableViewCell.Style.bottom
         } else {
             cell.style = InsetGroupTableViewCell.Style.middle
@@ -52,7 +62,7 @@ final class SelectTeamViewController: UITableViewController
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Teams"
+        NSLocalizedString("Teams", comment: "")
     }
     
 }

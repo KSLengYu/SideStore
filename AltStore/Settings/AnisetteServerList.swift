@@ -277,7 +277,7 @@ struct AnisetteServersView: View {
                                 .font(.headline)
                                 .foregroundColor(.primary)
 
-                            Text("Reaching catalog source '\(viewModel.source)'...")
+                            Text(String(format: NSLocalizedString("Reaching catalog source '%@'...", comment: ""), viewModel.source))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -293,11 +293,11 @@ struct AnisetteServersView: View {
                                 .foregroundColor(.orange)
                                 .padding(.top, 4)
 
-                            Text(viewModel.isNoInternet ? "No Internet Connection" : "Could Not Reach Servers")
+                            Text(LocalizedStringKey(viewModel.isNoInternet ? "No Internet Connection" : "Could Not Reach Servers"))
                                 .font(.headline)
                                 .foregroundColor(.primary)
 
-                            Text(viewModel.errorMessage ?? "No servers available.")
+                            Text(viewModel.errorMessage != nil ? LocalizedStringKey(viewModel.errorMessage!) : LocalizedStringKey("No servers available."))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -377,7 +377,7 @@ struct AnisetteServersView: View {
                             SwiftUI.Button {
                                 viewModel.toggleHide(item: item)
                             } label: {
-                                Label(item.isHidden ? "Unhide" : "Hide", systemImage: item.isHidden ? "eye" : "eye.slash")
+                                Label(LocalizedStringKey(item.isHidden ? "Unhide" : "Hide"), systemImage: item.isHidden ? "eye" : "eye.slash")
                             }
                             .tint(item.isHidden ? .blue : .orange)
                         }
@@ -409,7 +409,7 @@ struct AnisetteServersView: View {
                         Text("Catalog File")
                             .foregroundColor(.primary)
                         Spacer()
-                        Text(viewModel.importedFileName ?? "Imported File")
+                        Text(viewModel.importedFileName ?? NSLocalizedString("Imported File", comment: ""))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -514,7 +514,7 @@ struct AnisetteServersView: View {
                             Text("Server Catalog Source")
                             Spacer()
                             if !viewModel.isOfflineMode {
-                                SwiftUI.Button(isEditingURL ? "Done" : "Edit") {
+                                SwiftUI.Button(NSLocalizedString(isEditingURL ? "Done" : "Edit", comment: "")) {
                                     if isEditingURL {
                                         isEditingURL = false
                                         let trimmed = editingURLText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -535,7 +535,7 @@ struct AnisetteServersView: View {
                         }
                     } footer: {
                         if viewModel.isOfflineMode {
-                            Text("Currently using imported file '\(viewModel.importedFileName ?? "custom.json")'. Press and hold row to export.")
+                            Text(String(format: NSLocalizedString("Currently using imported file '%@'. Press and hold row to export.", comment: ""), viewModel.importedFileName ?? "custom.json"))
                         } else {
                             Text("URL of the JSON file containing registered Anisette servers. Press and hold row to export.")
                         }
@@ -724,7 +724,7 @@ struct AnisetteServersView: View {
             }
             SwiftUI.Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Are you sure you want to remove the imported catalog '\(viewModel.importedFileName ?? "custom.json")' and return to the default server URL?")
+            Text(String(format: NSLocalizedString("Are you sure you want to remove the imported catalog '%@' and return to the default server URL?", comment: ""), viewModel.importedFileName ?? "custom.json"))
         }
         .alert("Import Server Catalog?", isPresented: $showingImportAlert) {
             SwiftUI.Button("Import") {
@@ -736,7 +736,7 @@ struct AnisetteServersView: View {
             }
             SwiftUI.Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This will replace your current server catalog with the servers from '\(pendingImportName ?? "selected file")'. Do you want to proceed?")
+            Text(String(format: NSLocalizedString("This will replace your current server catalog with the servers from '%@'. Do you want to proceed?", comment: ""), pendingImportName ?? NSLocalizedString("selected file", comment: "")))
         }
         .sheet(isPresented: $showingShareSheet) {
             if let fileURL = exportFileURL {

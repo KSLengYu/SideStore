@@ -92,7 +92,57 @@ final class AuthenticationViewController: UIViewController
         NotificationCenter.default.addObserver(self, selector: #selector(AuthenticationViewController.textFieldDidChangeText(_:)), name: UITextField.textDidChangeNotification, object: self.appleIDTextField)
         NotificationCenter.default.addObserver(self, selector: #selector(AuthenticationViewController.textFieldDidChangeText(_:)), name: UITextField.textDidChangeNotification, object: self.passwordTextField)
         
+        self.localizeAll()
+        
         self.update()
+    }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        self.localizeAll()
+    }
+    
+    private func localizedString(_ key: String) -> String
+    {
+        let val = NSLocalizedString(key, comment: "")
+        if val != key { return val }
+        let authVal = Bundle.main.localizedString(forKey: key, value: "com.notfound", table: "Authentication")
+        if authVal != "com.notfound" { return authVal }
+        return key
+    }
+    
+    private func localizeAll()
+    {
+        self.title = self.localizedString("Sign in")
+        self.navigationItem.title = self.localizedString("Sign in")
+        if let leftTitle = self.navigationItem.leftBarButtonItem?.title, !leftTitle.isEmpty {
+            self.navigationItem.leftBarButtonItem?.title = self.localizedString(leftTitle)
+        }
+        if let rightTitle = self.navigationItem.rightBarButtonItem?.title, !rightTitle.isEmpty {
+            self.navigationItem.rightBarButtonItem?.title = self.localizedString(rightTitle)
+        }
+        self.localizeViewHierarchy(self.view)
+    }
+    
+    private func localizeViewHierarchy(_ view: UIView)
+    {
+        if let label = view as? UILabel, let text = label.text, !text.isEmpty {
+            label.text = self.localizedString(text)
+        } else if let button = view as? UIButton {
+            if let title = button.title(for: .normal), !title.isEmpty {
+                button.setTitle(self.localizedString(title), for: .normal)
+            }
+            return
+        } else if let textField = view as? UITextField {
+            if let placeholder = textField.placeholder, !placeholder.isEmpty {
+                textField.placeholder = self.localizedString(placeholder)
+            }
+            return
+        }
+        for subview in view.subviews {
+            localizeViewHierarchy(subview)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool)
@@ -183,18 +233,37 @@ private extension AuthenticationViewController
             case .failure(let error as NSError):
                 debugLog("AuthenticationViewController: Authentication failed with error: \(error)")
                 DispatchQueue.main.async {
-                    let error = error.withLocalizedTitle(NSLocalizedString("Failed to Sign In", comment: ""))
-                    let toastView = ToastView(error: error)
-                    toastView.show(in: self)
-                    toastView.backgroundColor = .white
-                    toastView.textLabel.textColor = .altPrimary
-                    toastView.detailTextLabel.textColor = .altPrimary
-                    self.toastView = toastView
-                    
                     self.signInButton.isIndicatingActivity = false
+                    let showErrorToast = {
+                        let errorWithTitle = error.withLocalizedTitle(NSLocalizedString("Failed to Sign In", comment: ""))
+                        let toastView = ToastView(error: errorWithTitle)
+                        toastView.show(in: self)
+                        toastView.backgroundColor = .white
+                        toastView.textLabel.textColor = .altPrimary
+                        toastView.detailTextLabel.textColor = .altPrimary
+                        self.toastView = toastView
+                    }
+
+                    let presentedRecovery = AuthManager.recordSignInFailureAndPresentRecoveryIfNeeded(
+                        for: error,
+                        in: self,
+                        onRecoveryApplied: { [weak self] in
+                            guard let self else { return }
+                            self.passwordTextField.text = ""
+                            self.update()
+                        },
+                        onCancel: showErrorToast
+                    )
+
+                    if !presentedRecovery {
+                        showErrorToast()
+                    }
                 }
                 
             case .success((let account, let session)):
+                Task { @MainActor in
+                    AuthManager.consecutiveSignInFailures = 0
+                }
                 DispatchQueue.main.async {
                     UIView.performWithoutAnimation {
                         let title = NSLocalizedString("Authenticated", comment: "")

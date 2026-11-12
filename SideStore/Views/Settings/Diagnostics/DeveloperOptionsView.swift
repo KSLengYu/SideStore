@@ -52,7 +52,7 @@ struct DeveloperOptionsView: View {
             VStack(alignment: .leading, spacing: 24) {
                 // Section 1: Logging & Diagnostics
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("LOGGING & DIAGNOSTICS")
+                    Text(NSLocalizedString("LOGGING & DIAGNOSTICS", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -142,7 +142,7 @@ struct DeveloperOptionsView: View {
                         
                         NavigationLink(destination: OperationsLoggingControlView()) {
                             HStack {
-                                Text("Operations Logging Control")
+                                Text(NSLocalizedString("Operations Logging Control", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -165,7 +165,7 @@ struct DeveloperOptionsView: View {
                     #else
                     let title = "TOP SHELF OPTIONS"
                     #endif
-                    Text(title)
+                    Text(NSLocalizedString(title, comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -182,7 +182,7 @@ struct DeveloperOptionsView: View {
                                 #else
                                 let title = "Reload Top Shelf"
                                 #endif
-                                Text(title)
+                                Text(NSLocalizedString(title, comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -204,7 +204,7 @@ struct DeveloperOptionsView: View {
                                 #else
                                 let title = "Rotate Top Shelf Log"
                                 #endif
-                                Text(title)
+                                Text(NSLocalizedString(title, comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -219,7 +219,7 @@ struct DeveloperOptionsView: View {
                 
                 // Section 2: Database Options
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("DATABASE OPTIONS")
+                    Text(NSLocalizedString("DATABASE OPTIONS", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -230,7 +230,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "square.and.arrow.up")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Export Database")
+                                Text(NSLocalizedString("Export Database", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -251,7 +251,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "clock.arrow.circlepath")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(Color(red: 1.0, green: 0.27, blue: 0.27))
-                                Text("Clear Refresh Attempts")
+                                Text(NSLocalizedString("Clear Refresh Attempts", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(Color(red: 1.0, green: 0.27, blue: 0.27))
                                 Spacer()
@@ -267,7 +267,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "trash")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(Color(red: 1.0, green: 0.27, blue: 0.27))
-                                Text("Delete Database")
+                                Text(NSLocalizedString("Delete Database", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(Color(red: 1.0, green: 0.27, blue: 0.27))
                                 Spacer()
@@ -283,7 +283,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "key")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(Color(red: 1.0, green: 0.27, blue: 0.27))
-                                Text("Clear Keychain Items")
+                                Text(NSLocalizedString("Clear Keychain Items", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(Color(red: 1.0, green: 0.27, blue: 0.27))
                                 Spacer()
@@ -308,7 +308,7 @@ struct DeveloperOptionsView: View {
                 
                 // Section 3: WireGuard Configuration
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("WIREGUARD CONFIGURATION")
+                    Text(NSLocalizedString("WIREGUARD CONFIGURATION", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -319,7 +319,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "play.circle")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Start EMProxy")
+                                Text(NSLocalizedString("Start EMProxy", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -335,7 +335,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "stop.circle")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Stop EMProxy")
+                                Text(NSLocalizedString("Stop EMProxy", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -359,7 +359,7 @@ struct DeveloperOptionsView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("BACKGROUND SERVICE")
+                    Text(NSLocalizedString("BACKGROUND SERVICE", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -370,7 +370,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "play.circle")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Start Background Service")
+                                Text(NSLocalizedString("Start Background Service", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -386,7 +386,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "stop.circle")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Stop Background Service")
+                                Text(NSLocalizedString("Stop Background Service", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -401,14 +401,14 @@ struct DeveloperOptionsView: View {
                 
                 // Section: Device (TCP) Probe Timeout
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("DEVICE (TCP) PROBE TIMEOUT")
+                    Text(NSLocalizedString("DEVICE (TCP) PROBE TIMEOUT", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
                     
                     VStack(spacing: 0) {
                         HStack(spacing: 12) {
-                            Text("Timeout (ms)")
+                            Text(NSLocalizedString("Timeout (ms)", comment: ""))
                                 .font(.system(size: 17, weight: .bold))
                                 .foregroundColor(.white)
                             
@@ -444,7 +444,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "arrow.counterclockwise")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Use Default (\(AppConstants.Minimuxer.defaultTCPProbeTimeoutMs) ms)")
+                                Text(String(format: NSLocalizedString("Use Default (%d ms)", comment: ""), AppConstants.Minimuxer.defaultTCPProbeTimeoutMs))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -459,7 +459,7 @@ struct DeveloperOptionsView: View {
                 
                 // Section: Connection Config
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("CONNECTION CONFIG")
+                    Text(NSLocalizedString("CONNECTION CONFIG", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -490,7 +490,7 @@ struct DeveloperOptionsView: View {
                 #if DEBUG
                 // Section 3: Account Management
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("ACCOUNT MANAGEMENT")
+                    Text(NSLocalizedString("ACCOUNT MANAGEMENT", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -501,7 +501,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "square.and.arrow.down")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Import Account JSON")
+                                Text(NSLocalizedString("Import Account JSON", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -517,7 +517,7 @@ struct DeveloperOptionsView: View {
                                AuthManager.shared.password == nil ||
                                CertificateManager.shared.activeCertificate == nil {
                                 if let top = UIApplication.shared.topViewController() {
-                                    let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: "Account not found or missing credentials.")
+                                    let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: NSLocalizedString("Account not found or missing credentials.", comment: ""))
                                     toastView.show(in: top)
                                 }
                             } else {
@@ -529,7 +529,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "square.and.arrow.up")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Export Account JSON")
+                                Text(NSLocalizedString("Export Account JSON", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -544,7 +544,7 @@ struct DeveloperOptionsView: View {
                 #endif
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("PROVISIONING PROFILES")
+                    Text(NSLocalizedString("PROVISIONING PROFILES", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -559,7 +559,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "arrow.down.doc")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Dump Provisioning Profiles")
+                                Text(NSLocalizedString("Dump Provisioning Profiles", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -578,7 +578,7 @@ struct DeveloperOptionsView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("ONBOARDING")
+                    Text(NSLocalizedString("ONBOARDING", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -589,7 +589,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "sparkles")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Replay Onboarding")
+                                Text(NSLocalizedString("Replay Onboarding", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -620,7 +620,7 @@ struct DeveloperOptionsView: View {
                                 Image(systemName: "arrow.counterclockwise")
                                     .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(.white)
-                                Text("Reset Onboarding State")
+                                Text(NSLocalizedString("Reset Onboarding State", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -638,48 +638,48 @@ struct DeveloperOptionsView: View {
             .padding(.bottom, 32)
         }
         .background(Color(uiColor: .settingsBackground).ignoresSafeArea())
-        .navigationTitle("Developer Options")
+        .navigationTitle(NSLocalizedString("Developer Options", comment: ""))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
-        .alert("Delete Database", isPresented: $showDeleteConfirmation) {
-            SwiftUI.Button("Delete & Exit", role: .destructive) {
+        .alert(NSLocalizedString("Delete Database", comment: ""), isPresented: $showDeleteConfirmation) {
+            SwiftUI.Button(NSLocalizedString("Delete & Exit", comment: ""), role: .destructive) {
                 _ = DatabaseManager.deleteDatabase()
                 exit(0)
             }
-            SwiftUI.Button("Cancel", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
         } message: {
-            Text("Deleting the database will remove all app entries and sources from SideStore.")
+            Text(NSLocalizedString("Deleting the database will remove all app entries and sources from SideStore.", comment: ""))
         }
-        .alert("Clear Refresh Attempts", isPresented: $showClearRefreshAttemptsConfirmation) {
-            SwiftUI.Button("Clear", role: .destructive) {
+        .alert(NSLocalizedString("Clear Refresh Attempts", comment: ""), isPresented: $showClearRefreshAttemptsConfirmation) {
+            SwiftUI.Button(NSLocalizedString("Clear", comment: ""), role: .destructive) {
                 clearRefreshAttempts()
             }
-            SwiftUI.Button("Cancel", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
         } message: {
-            Text("Are you sure you want to clear all existing refresh attempt entries?")
+            Text(NSLocalizedString("Are you sure you want to clear all existing refresh attempt entries?", comment: ""))
         }
         #if DEBUG
-        .alert("Export Account", isPresented: $showExportPasswordPrompt) {
-            SecureField("Certificate Password", text: $exportCertPassword)
-            SwiftUI.Button("Export") {
+        .alert(NSLocalizedString("Export Account", comment: ""), isPresented: $showExportPasswordPrompt) {
+            SecureField(NSLocalizedString("Certificate Password", comment: ""), text: $exportCertPassword)
+            SwiftUI.Button(NSLocalizedString("Export", comment: "")) {
                 exportAccountJSON(password: exportCertPassword)
             }
-            SwiftUI.Button("Cancel", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
         } message: {
-            Text("Please enter a password for the certificate.")
+            Text(NSLocalizedString("Please enter a password for the certificate.", comment: ""))
         }
         #endif
-        .alert("Clear Keychain Items", isPresented: $showClearKeychainConfirmation) {
-            SwiftUI.Button("Clear All", role: .destructive) {
+        .alert(NSLocalizedString("Clear Keychain Items", comment: ""), isPresented: $showClearKeychainConfirmation) {
+            SwiftUI.Button(NSLocalizedString("Clear All", comment: ""), role: .destructive) {
                 Keychain.shared.clearAll()
             }
-            SwiftUI.Button("Cancel", role: .cancel) {}
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {}
         } message: {
-            Text("Do you want to clear all keychain items related to this SideStore instance?")
+            Text(NSLocalizedString("Do you want to clear all keychain items related to this SideStore instance?", comment: ""))
         }
-        .alert("Dump Profiles", isPresented: $showDumpProfilesAlert) {
-            SwiftUI.Button("OK", role: .cancel) {}
+        .alert(NSLocalizedString("Dump Profiles", comment: ""), isPresented: $showDumpProfilesAlert) {
+            SwiftUI.Button(NSLocalizedString("OK", comment: ""), role: .cancel) {}
         } message: {
             Text(dumpProfilesAlertMessage)
         }
@@ -695,10 +695,10 @@ struct DeveloperOptionsView: View {
         do {
             let zipPath = try await safeDumpProfiles(docsURL.path)
             let fileName = URL(fileURLWithPath: zipPath).lastPathComponent
-            dumpProfilesAlertMessage = "Profiles saved to:\n\(fileName)"
+            dumpProfilesAlertMessage = String(format: NSLocalizedString("Profiles saved to:\n%@", comment: ""), fileName)
             showDumpProfilesAlert = true
         } catch {
-            dumpProfilesAlertMessage = "Failed to dump profiles:\n\(error.localizedDescription)"
+            dumpProfilesAlertMessage = String(format: NSLocalizedString("Failed to dump profiles:\n%@", comment: ""), error.localizedDescription)
             showDumpProfilesAlert = true
         }
     }
@@ -714,7 +714,7 @@ struct DeveloperOptionsView: View {
                 do {
                     try await ImportExport.importAccountJSON(from: url)
                     let email = AuthManager.shared.currentAppleID ?? ""
-                    let toastView = ToastView(text: NSLocalizedString("Successfully imported '\(email)'!", comment: ""), detailText: "SideStore should be fully operational!")
+                    let toastView = ToastView(text: String(format: NSLocalizedString("Successfully imported '%@'!", comment: ""), email), detailText: NSLocalizedString("SideStore should be fully operational!", comment: ""))
                     toastView.show(in: top)
                 } catch {
                     let toastView = ToastView(text: NSLocalizedString("Failed to import account JSON!", comment: ""), detailText: error.localizedDescription)
@@ -727,7 +727,7 @@ struct DeveloperOptionsView: View {
         #else
         TVWebFileTransferManager.shared.startImport(
             acceptedExtensions: ["sideconf", "json"],
-            title: "Import Account",
+            title: NSLocalizedString("Import Account", comment: ""),
             presentingVC: top
         ) { selectedURL in
             guard let url = selectedURL else { return }
@@ -735,7 +735,7 @@ struct DeveloperOptionsView: View {
                 do {
                     try await ImportExport.importAccountJSON(from: url)
                     let email = AuthManager.shared.currentAppleID ?? ""
-                    let toastView = ToastView(text: NSLocalizedString("Successfully imported '\(email)'!", comment: ""), detailText: "SideStore should be fully operational!")
+                    let toastView = ToastView(text: String(format: NSLocalizedString("Successfully imported '%@'!", comment: ""), email), detailText: NSLocalizedString("SideStore should be fully operational!", comment: ""))
                     toastView.show(in: top)
                 } catch {
                     let toastView = ToastView(text: NSLocalizedString("Failed to import account JSON!", comment: ""), detailText: error.localizedDescription)
@@ -749,13 +749,13 @@ struct DeveloperOptionsView: View {
     private func exportAccountJSON(password: String) {
         guard let top = UIApplication.shared.topViewController() else { return }
         guard let account = ImportExport.exportAccountJSON(password: password) else {
-            let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: "Account not found or missing credentials.")
+            let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: NSLocalizedString("Account not found or missing credentials.", comment: ""))
             toastView.show(in: top)
             return
         }
         
         guard let accountData = try? Foundation.JSONEncoder().encode(account) else {
-            let toastView = ToastView(text: NSLocalizedString("Failed to export account data!", comment: ""), detailText: "Account malformed.")
+            let toastView = ToastView(text: NSLocalizedString("Failed to export account data!", comment: ""), detailText: NSLocalizedString("Account malformed.", comment: ""))
             toastView.show(in: top)
             return
         }
@@ -767,7 +767,7 @@ struct DeveloperOptionsView: View {
             let exportVC = UIDocumentPickerViewController(forExporting: [tmpPath], asCopy: false)
             top.present(exportVC, animated: true)
             #else
-            TVWebFileTransferManager.shared.startExport(fileURL: tmpPath, title: "Export Account", presentingVC: top)
+            TVWebFileTransferManager.shared.startExport(fileURL: tmpPath, title: NSLocalizedString("Export Account", comment: ""), presentingVC: top)
             #endif
         } catch {
             let toastView = ToastView(text: NSLocalizedString("Failed to export account!", comment: ""), detailText: error.localizedDescription)
@@ -788,7 +788,7 @@ struct DeveloperOptionsView: View {
     
     private func toggleRow(title: String, isOn: Binding<Bool>) -> some View {
         HStack {
-            Text(title)
+            Text(NSLocalizedString(title, comment: ""))
                 .font(.system(size: 17, weight: .bold))
                 .foregroundColor(.white)
                 .fixedSize(horizontal: false, vertical: true)
@@ -836,7 +836,7 @@ struct DeveloperOptionsView: View {
             do {
                 try await startEMProxy()
                 await MainActor.run {
-                    let toastView = ToastView(text: NSLocalizedString("Started EMProxy", comment: ""), detailText: "EMProxy loopback server is running.")
+                    let toastView = ToastView(text: NSLocalizedString("Started EMProxy", comment: ""), detailText: NSLocalizedString("EMProxy loopback server is running.", comment: ""))
                     toastView.show(in: top)
                 }
             } catch {
@@ -854,7 +854,7 @@ struct DeveloperOptionsView: View {
             do {
                 try await stopEMProxy()
                 await MainActor.run {
-                    let toastView = ToastView(text: NSLocalizedString("Stopped EMProxy", comment: ""), detailText: "EMProxy loopback server stopped.")
+                    let toastView = ToastView(text: NSLocalizedString("Stopped EMProxy", comment: ""), detailText: NSLocalizedString("EMProxy loopback server stopped.", comment: ""))
                     toastView.show(in: top)
                 }
             } catch {
@@ -871,10 +871,10 @@ struct DeveloperOptionsView: View {
         let started = BackgroundServiceManager.ensureBackgroundServicesStarted()
         let modeName = UserDefaults.standard.backgroundServiceMode.displayName
         if started {
-            let toastView = ToastView(text: NSLocalizedString("Started Background Service", comment: ""), detailText: "\(modeName) keepalive is running.")
+            let toastView = ToastView(text: NSLocalizedString("Started Background Service", comment: ""), detailText: String(format: NSLocalizedString("%@ keepalive is running.", comment: ""), modeName))
             toastView.show(in: top)
         } else {
-            let toastView = ToastView(text: NSLocalizedString("Background Service Disabled", comment: ""), detailText: "Enable background service in User Customizations.")
+            let toastView = ToastView(text: NSLocalizedString("Background Service Disabled", comment: ""), detailText: NSLocalizedString("Enable background service in User Customizations.", comment: ""))
             toastView.show(in: top)
         }
     }
@@ -882,7 +882,7 @@ struct DeveloperOptionsView: View {
     private func triggerStopBackgroundService() {
         guard let top = UIApplication.shared.topViewController() else { return }
         BackgroundServiceManager.stop()
-        let toastView = ToastView(text: NSLocalizedString("Stopped Background Service", comment: ""), detailText: "Background keepalive service stopped.")
+        let toastView = ToastView(text: NSLocalizedString("Stopped Background Service", comment: ""), detailText: NSLocalizedString("Background keepalive service stopped.", comment: ""))
         toastView.show(in: top)
     }
     
@@ -890,11 +890,11 @@ struct DeveloperOptionsView: View {
         #if !os(tvOS)
         WidgetCenter.shared.reloadAllTimelines()
         let title = NSLocalizedString("Reloaded All Widgets", comment: "")
-        let detail = "Triggered timeline refresh for all widgets."
+        let detail = NSLocalizedString("Triggered timeline refresh for all widgets.", comment: "")
         #else
         NotificationCenter.default.post(name: .TVTopShelfItemsDidChange, object: nil)
         let title = NSLocalizedString("Reloaded Top Shelf", comment: "")
-        let detail = "Triggered Top Shelf refresh."
+        let detail = NSLocalizedString("Triggered Top Shelf refresh.", comment: "")
         #endif
         if let top = UIApplication.shared.topViewController() {
             let toastView = ToastView(text: title, detailText: detail)
@@ -911,10 +911,10 @@ struct DeveloperOptionsView: View {
         #endif
         do {
             if let rotatedURL = try WidgetLogManager.rotateLog() {
-                let toastView = ToastView(text: NSLocalizedString("Rotated \(logName) Log", comment: ""), detailText: "Saved to WidgetLogs/\(rotatedURL.lastPathComponent)")
+                let toastView = ToastView(text: String(format: NSLocalizedString("Rotated %@ Log", comment: ""), NSLocalizedString(logName, comment: "")), detailText: String(format: NSLocalizedString("Saved to WidgetLogs/%@", comment: ""), rotatedURL.lastPathComponent))
                 toastView.show(in: top)
             } else {
-                let toastView = ToastView(text: NSLocalizedString("\(logName) Log Empty", comment: ""), detailText: "Nothing to rotate.")
+                let toastView = ToastView(text: String(format: NSLocalizedString("%@ Log Empty", comment: ""), NSLocalizedString(logName, comment: "")), detailText: NSLocalizedString("Nothing to rotate.", comment: ""))
                 toastView.show(in: top)
             }
         } catch {

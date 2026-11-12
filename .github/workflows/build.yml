@@ -1,0 +1,158 @@
+name: Build SideStore-zh_CN
+
+on:
+  push:
+    branches: [LiveContainerSupport]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.editorconfig'
+      - '.gitignore'
+  workflow_dispatch:
+    inputs:
+      release__nightly:
+        description: Create a nightly release
+        type: boolean
+        required: false
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build SideStore-zh_CN.ipa
+    runs-on: xcode-27
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Pre-populate SwiftPM binary artifacts
+        run: |
+          ARTIFACTS_DIR="$HOME/Library/Caches/org.swift.swiftpm/artifacts"
+          mkdir -p "$ARTIFACTS_DIR"
+          curl -fL "https://github.com/krzyzanowskim/OpenSSL/releases/download/3.6.2000/OpenSSL.xcframework.zip" \
+            -o "$ARTIFACTS_DIR/https___github_com_krzyzanowskim_OpenSSL_releases_download_3_6_2000_OpenSSL_xcframework_zip"
+          curl -fL "https://github.com/mahee96/unicorn/releases/download/2.1.4-multiarch/Unicorn.xcframework.zip" \
+            -o "$ARTIFACTS_DIR/https___github_com_mahee96_unicorn_releases_download_2_1_4_multiarch_Unicorn_xcframework_zip"
+
+      - name: Generate strings and archive SideStore
+        run: |
+          python3 scripts/generate_full_strings.py
+          xcodebuild archive \
+            -archivePath "$GITHUB_WORKSPACE/SideStore" \
+            -project AltStore.xcodeproj \
+            -scheme SideStore \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGNING_REQUIRED=NO \
+            AD_HOC_CODE_SIGNING_ALLOWED=YES \
+            CODE_SIGNING_ALLOWED=NO \
+            DEVELOPMENT_TEAM=XYZ0123456 \
+            ORG_IDENTIFIER=com.SideStore \
+            -quiet
+
+      - name: Sign components and package SideStore-zh_CN.ipa
+        run: |
+          APP_DIR="$GITHUB_WORKSPACE/SideStore.xcarchive/Products/Applications/SideStore.app"
+          cp -R AltStore/Resources/zh-Hans.lproj "$APP_DIR/"
+          cp -R AltStore/Resources/en.lproj "$APP_DIR/"
+
+          if [ -f "$APP_DIR/SideBackup.ipa" ]; then
+            unzip -q -o "$APP_DIR/SideBackup.ipa" -d "$APP_DIR/"
+            if [ -d "$APP_DIR/Payload/SideBackup.app" ]; then
+              /usr/bin/codesign -f -s - --entitlements SideBackup/SideBackup.entitlements "$APP_DIR/Payload/SideBackup.app/SideBackup"
+              /usr/bin/codesign -f -s - --entitlements SideBackup/SideBackup.entitlements "$APP_DIR/Payload/SideBackup.app"
+            fi
+            pushd "$APP_DIR" > /dev/null
+            rm -f SideBackup.ipa
+            zip -qr SideBackup.ipa Payload
+            popd > /dev/null
+            rm -rf "$APP_DIR/Payload"
+          fi
+
+          if [ -d "$APP_DIR/Frameworks" ]; then
+            find "$APP_DIR/Frameworks" -type f -name "*.dylib" -exec /usr/bin/codesign -f -s - {} + 2>/dev/null || true
+            for fw in "$APP_DIR/Frameworks/"*.framework; do
+              if [ -d "$fw" ]; then
+                /usr/bin/codesign -f -s - "$fw"
+              fi
+            done
+          fi
+
+          if [ -d "$APP_DIR/PlugIns/AltWidgetExtension.appex" ]; then
+            /usr/bin/codesign -f -s - --entitlements AltWidget/Resources/ReleaseEntitlements.plist "$APP_DIR/PlugIns/AltWidgetExtension.appex/AltWidgetExtension"
+            /usr/bin/codesign -f -s - --entitlements AltWidget/Resources/ReleaseEntitlements.plist "$APP_DIR/PlugIns/AltWidgetExtension.appex"
+          fi
+
+          /usr/bin/codesign -f -s - --entitlements AltStore/Resources/ReleaseEntitlements.plist "$APP_DIR/SideStore"
+          /usr/bin/codesign -f -s - --entitlements AltStore/Resources/ReleaseEntitlements.plist "$APP_DIR"
+
+          rm -rf Payload
+          mkdir -p Payload
+          cp -R "$APP_DIR" Payload/SideStore.app
+          zip -qr SideStore-zh_CN.ipa Payload -x "._*" -x ".DS_Store" -x "__MACOSX"
+          rm -rf Payload
+
+      - name: Upload SideStore-zh_CN.ipa
+        uses: actions/upload-artifact@v7
+        with:
+          name: SideStore-zh_CN.ipa
+          path: SideStore-zh_CN.ipa
+
+  release__nightly:
+    name: Nightly Release
+    permissions:
+      contents: write
+    if: inputs.release__nightly || (github.event_name == 'push' && github.ref == 'refs/heads/LiveContainerSupport')
+    runs-on: ubuntu-latest
+    needs: [build]
+    concurrency:
+      group: release__nightly
+      cancel-in-progress: true
+    steps:
+      - name: Download SideStore-zh_CN.ipa
+        uses: actions/download-artifact@v8
+        with:
+          name: SideStore-zh_CN.ipa
+
+      - name: Publish Latest Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          RELEASE_TAG="nightly"
+          RELEASE_TITLE="Nightly Release @ $(date -u +%Y%m%d)"
+
+          {
+            printf '**Commit:** [%s](https://github.com/%s/commit/%s)\n' "${{ github.sha }}" "${{ github.repository }}" "${{ github.sha }}"
+            printf '**Message:** %s\n\n' "$COMMIT_MSG"
+            printf '自动构建自 [GitHub Actions](%s/%s/actions/runs/%s/attempts/%s)（SideStore 独立版简体中文分支）。\n' "${{ github.server_url }}" "${{ github.repository }}" "${{ github.run_id }}" "${{ github.run_attempt }}"
+          } > release-notes.md
+
+          if gh api "repos/${{ github.repository }}/git/ref/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            gh api -X PATCH "repos/${{ github.repository }}/git/refs/tags/$RELEASE_TAG" -f sha="${{ github.sha }}" -F force=true >/dev/null
+          else
+            gh api -X POST "repos/${{ github.repository }}/git/refs" -f ref="refs/tags/$RELEASE_TAG" -f sha="${{ github.sha }}" >/dev/null
+          fi
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" SideStore-zh_CN.ipa --clobber
+            gh release edit "$RELEASE_TAG" \
+              --title "$RELEASE_TITLE" \
+              --notes-file release-notes.md \
+              --prerelease=false \
+              --latest
+          else
+            gh release create "$RELEASE_TAG" SideStore-zh_CN.ipa \
+              --target "${{ github.sha }}" \
+              --title "$RELEASE_TITLE" \
+              --notes-file release-notes.md \
+              --latest
+          fi

@@ -33,14 +33,14 @@ struct BonjourDiscoveryView: View {
             #endif
             
             if viewModel.isSearching && viewModel.domains.isEmpty {
-                ProgressView("Searching for domains…")
+                ProgressView(NSLocalizedString("Searching for domains…", comment: ""))
             } else if !viewModel.isSearching && viewModel.domains.isEmpty {
                 emptyState
             } else {
                 domainsList
             }
         }
-        .navigationTitle("Discovery")
+        .navigationTitle(NSLocalizedString("Network Discovery", comment: ""))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -65,30 +65,30 @@ struct BonjourDiscoveryView: View {
                         SwiftUI.Button {
                             viewModel.domainGroupByFirstLetter = false
                         } label: {
-                            Label("None", systemImage: !viewModel.domainGroupByFirstLetter ? "checkmark" : "")
+                            Label(NSLocalizedString("None", comment: ""), systemImage: !viewModel.domainGroupByFirstLetter ? "checkmark" : "")
                         }
                         SwiftUI.Button {
                             viewModel.domainGroupByFirstLetter = true
                         } label: {
-                            Label("First Letter", systemImage: viewModel.domainGroupByFirstLetter ? "checkmark" : "")
+                            Label(NSLocalizedString("First Letter", comment: ""), systemImage: viewModel.domainGroupByFirstLetter ? "checkmark" : "")
                         }
                     } label: {
-                        Label("Group By", systemImage: "rectangle.3.group")
+                        Label(NSLocalizedString("Group By", comment: ""), systemImage: "rectangle.3.group")
                     }
                     
                     Menu {
                         SwiftUI.Button {
                             viewModel.domainSortAscending = true
                         } label: {
-                            Label("Name (A to Z)", systemImage: viewModel.domainSortAscending ? "checkmark" : "")
+                            Label(NSLocalizedString("Name (A to Z)", comment: ""), systemImage: viewModel.domainSortAscending ? "checkmark" : "")
                         }
                         SwiftUI.Button {
                             viewModel.domainSortAscending = false
                         } label: {
-                            Label("Name (Z to A)", systemImage: !viewModel.domainSortAscending ? "checkmark" : "")
+                            Label(NSLocalizedString("Name (Z to A)", comment: ""), systemImage: !viewModel.domainSortAscending ? "checkmark" : "")
                         }
                     } label: {
-                        Label("Sort By", systemImage: "arrow.up.arrow.down")
+                        Label(NSLocalizedString("Sort By", comment: ""), systemImage: "arrow.up.arrow.down")
                     }
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
@@ -99,11 +99,11 @@ struct BonjourDiscoveryView: View {
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
-                .confirmationDialog("Filter & Sort", isPresented: $showFilterDialog) {
-                    SwiftUI.Button(viewModel.domainGroupByFirstLetter ? "Group: None" : "Group: First Letter") {
+                .confirmationDialog(NSLocalizedString("Filter & Sort", comment: ""), isPresented: $showFilterDialog) {
+                    SwiftUI.Button(viewModel.domainGroupByFirstLetter ? NSLocalizedString("Group: None", comment: "") : NSLocalizedString("Group: First Letter", comment: "")) {
                         viewModel.domainGroupByFirstLetter.toggle()
                     }
-                    SwiftUI.Button(viewModel.domainSortAscending ? "Sort: Name (Z to A)" : "Sort: Name (A to Z)") {
+                    SwiftUI.Button(viewModel.domainSortAscending ? NSLocalizedString("Sort: Name (Z to A)", comment: "") : NSLocalizedString("Sort: Name (A to Z)", comment: "")) {
                         viewModel.domainSortAscending.toggle()
                     }
                 }
@@ -143,10 +143,10 @@ struct BonjourDiscoveryView: View {
             Image(systemName: "network")
                 .font(.system(size: 48))
                 .foregroundColor(.secondary)
-            Text("No Domains Found")
+            Text(NSLocalizedString("No Domains Found", comment: ""))
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Text("Make sure you're connected to a local network.")
+            Text(NSLocalizedString("Make sure you're connected to a local network.", comment: ""))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -155,18 +155,18 @@ struct BonjourDiscoveryView: View {
             SwiftUI.Button {
                 startAutoRefresh()
             } label: {
-                Label("Retry", systemImage: "arrow.clockwise")
+                Label(NSLocalizedString("Retry", comment: ""), systemImage: "arrow.clockwise")
                     .font(.subheadline.weight(.medium))
             }
             .padding(.top, 4)
             
             VStack(spacing: 8) {
-                Text("Ensure **Local Network Access** is provided otherwise this function may not work as intended since it is based on L N A...")
+                Text(LocalizedStringKey("Ensure **Local Network Access** is provided otherwise this function may not work as intended since it is based on L N A..."))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
                 
-                Text("**Settings -> apps -> SideStore -> LocalNetworkAccess = toggle on**")
+                Text(LocalizedStringKey("**Settings -> apps -> SideStore -> LocalNetworkAccess = toggle on**"))
                     .font(.caption.bold())
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)

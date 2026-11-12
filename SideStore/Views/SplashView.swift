@@ -56,7 +56,7 @@ struct SplashView: View {
                 Spacer()
 
                 if !viewModel.status.isEmpty {
-                    Text(viewModel.status)
+                    Text(NSLocalizedString(viewModel.status, comment: ""))
                         .font(.system(size: 14))
                         .foregroundColor(.secondary)
                         .transition(.opacity)

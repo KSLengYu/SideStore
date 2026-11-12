@@ -37,6 +37,12 @@ extension SettingsViewController
         case diagnostics    // diagnostics section, will be enabled on release builds only on swipe down with 3 fingers 3 times
         // case macDirtyCow
     }
+
+    private enum DisplayRow: Int, CaseIterable
+    {
+        case appIcon
+        case language
+    }
     
     private enum AppRefreshRow: Int, CaseIterable
     {
@@ -62,6 +68,7 @@ extension SettingsViewController
         case developer
         case operations
         case designer
+        case chineseLocalization
         case softwareLicenses
     }
     
@@ -284,11 +291,16 @@ final class SettingsViewController: UITableViewController
         }
         
         configureReleaseChannelButton()
+        self.title = NSLocalizedString("Settings", comment: "")
+        self.navigationItem.title = NSLocalizedString("Settings", comment: "")
     }
     
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
+        self.title = NSLocalizedString("Settings", comment: "")
+        self.navigationItem.title = NSLocalizedString("Settings", comment: "")
         
         // show nav bar if not shown already
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -382,7 +394,7 @@ private extension SettingsViewController
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         let attributed = NSMutableAttributedString(
-            string: "Copied! ",
+            string: NSLocalizedString("Copied! ", comment: ""),
             attributes: [
                 .font: UIFont.systemFont(ofSize: 14),
                 .foregroundColor: UIColor.white.withAlphaComponent(0.7),
@@ -412,7 +424,7 @@ private extension SettingsViewController
             {
                 self.accountNameLabel.text = team.name
                 self.accountEmailLabel.text = appleID
-                self.accountTypeLabel.text = team.type.localizedDescription
+                self.accountTypeLabel.text = NSLocalizedString(team.type.localizedDescription, comment: "")
                 
                 self.activeTeam = team
                 self.startAccountVerification(for: team)
@@ -640,8 +652,21 @@ private extension SettingsViewController
                 debugLog("[SettingsVC] signIn() authentication cancelled by user")
             } catch {
                 debugLog("[SettingsVC] signIn() authentication failed with error: \(error)")
-                let toastView = ToastView(error: error)
-                toastView.show(in: self.view)
+                let presentedRecovery = AuthManager.recordSignInFailureAndPresentRecoveryIfNeeded(
+                    for: error,
+                    in: self,
+                    onRecoveryApplied: { [weak self] in
+                        self?.update()
+                    },
+                    onCancel: { [weak self] in
+                        guard let self else { return }
+                        ToastView(error: error).show(in: self.view)
+                    }
+                )
+                if !presentedRecovery {
+                    let toastView = ToastView(error: error)
+                    toastView.show(in: self.view)
+                }
             }
             
             debugLog("[SettingsVC] signIn() calling update()...")
@@ -958,6 +983,9 @@ extension SettingsViewController
         if Section.allCases[indexPath.section] == .account && indexPath.row == 3 {
             return AccountVerificationRow.preferredHeight
         }
+        if Section.allCases[indexPath.section] == .display && indexPath.row == 1 {
+            return 51
+        }
         let effectiveIndexPath: IndexPath
         if Section.allCases[indexPath.section] == .advancedSettings {
             let row = AdvancedSettingsRow.allCases[indexPath.row]
@@ -979,12 +1007,23 @@ extension SettingsViewController
                 actionCell.contentView.backgroundColor = .clear
                 actionCell.backgroundConfiguration = .clear()
             }
+        } else if Section.allCases[indexPath.section] == .display {
+            if let insetCell = cell as? InsetGroupTableViewCell {
+                if indexPath.row == 0 {
+                    insetCell.style = .top
+                } else {
+                    insetCell.style = .bottom
+                }
+            }
         }
     }
 
     override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int
     {
         if Section.allCases[indexPath.section] == .account && indexPath.row == 3 {
+            return 0
+        }
+        if Section.allCases[indexPath.section] == .display && indexPath.row == 1 {
             return 0
         }
         let effectiveIndexPath: IndexPath
@@ -1005,6 +1044,8 @@ extension SettingsViewController
         case _ where isSectionHidden(section): return 0
         case .signIn: return (self.activeTeam == nil) ? 1 : 0
         case .account: return (self.activeTeam == nil) ? 0 : (self.accountStatus == .completed ? 3 : 4)
+        case .display: return DisplayRow.allCases.count
+        case .credits: return CreditsRow.allCases.count
         case .appRefresh: return AppRefreshRow.allCases.count
         case .advancedSettings: return AdvancedSettingsRow.allCases.count
         default: return super.tableView(tableView, numberOfRowsInSection: section.rawValue)
@@ -1013,11 +1054,29 @@ extension SettingsViewController
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
+        if Section.allCases[indexPath.section] == .display {
+            let cell = super.tableView(tableView, cellForRowAt: indexPath)
+            if indexPath.row == 1 {
+                let currentLang = SideStoreLanguageManager.shared.currentLanguage
+                let langName = SideStoreLanguageManager.supportedLanguages.first { $0.code == currentLang }?.name ?? "简体中文"
+                if let detailLabel = cell.contentView.viewWithTag(1002) as? UILabel {
+                    if SideStoreLanguageManager.shared.needsRestart {
+                        detailLabel.text = "\(langName) (\(NSLocalizedString("Restart Required", comment: "")))"
+                    } else {
+                        detailLabel.text = langName
+                    }
+                }
+            }
+            self.localizeViewHierarchy(cell)
+            return cell
+        }
+
         if Section.allCases[indexPath.section] == .account && indexPath.row == 3 {
             let cell = tableView.dequeueReusableCell(withIdentifier: AccountVerificationRow.reuseIdentifier) as? AccountVerificationRow
                 ?? AccountVerificationRow()
             cell.configure(with: self.accountStatus)
             cell.style = .bottom
+            self.localizeViewHierarchy(cell)
             return cell
         }
         
@@ -1057,7 +1116,92 @@ extension SettingsViewController
         }
         
         
+        self.localizeViewHierarchy(cell)
         return cell
+    }
+    
+    private func localizeViewHierarchy(_ view: UIView) {
+        if let label = view as? UILabel {
+            if label === self.accountNameLabel || label === self.accountEmailLabel || label === self.accountTypeLabel || label === self.versionLabel {
+                return
+            }
+            if let text = label.text, !text.isEmpty {
+                let originalKey: String
+                if let saved = label.accessibilityIdentifier, saved.hasPrefix("ss_i18n:") {
+                    originalKey = String(saved.dropFirst("ss_i18n:".count))
+                } else {
+                    originalKey = text
+                    label.accessibilityIdentifier = "ss_i18n:" + text
+                }
+                var localized = NSLocalizedString(originalKey, comment: "")
+                if localized == originalKey {
+                    localized = NSLocalizedString(originalKey, tableName: "Settings", comment: "")
+                }
+                label.text = localized
+            }
+        } else if let button = view as? UIButton {
+            if let title = button.title(for: .normal), !title.isEmpty {
+                let originalKey: String
+                if let saved = button.accessibilityIdentifier, saved.hasPrefix("ss_i18n:") {
+                    originalKey = String(saved.dropFirst("ss_i18n:".count))
+                } else {
+                    originalKey = title
+                    button.accessibilityIdentifier = "ss_i18n:" + title
+                }
+                var localized = NSLocalizedString(originalKey, comment: "")
+                if localized == originalKey {
+                    localized = NSLocalizedString(originalKey, tableName: "Settings", comment: "")
+                }
+                button.setTitle(localized, for: .normal)
+            }
+        }
+        for subview in view.subviews {
+            localizeViewHierarchy(subview)
+        }
+    }
+    
+    private func presentLanguagePicker() {
+        let alert = UIAlertController(
+            title: NSLocalizedString("Language", comment: ""),
+            message: NSLocalizedString("Choose display language for SideStore", comment: ""),
+            preferredStyle: .actionSheet
+        )
+        
+        let currentLang = SideStoreLanguageManager.shared.currentLanguage
+        for lang in SideStoreLanguageManager.supportedLanguages {
+            let isCurrent = (lang.code == currentLang)
+            let title = isCurrent ? "✓ \(lang.name)" : lang.name
+            let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
+                SideStoreLanguageManager.shared.currentLanguage = lang.code
+                self?.tableView.reloadData()
+                if SideStoreLanguageManager.shared.needsRestart {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        SideStoreLanguageManager.shared.presentRestartAlert(from: self ?? UIApplication.shared.topViewController())
+                    }
+                }
+            }
+            alert.addAction(action)
+        }
+        
+        if SideStoreLanguageManager.shared.needsRestart {
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Restart Now", comment: ""), style: .destructive) { _ in
+                SideStoreLanguageManager.shared.restartApp()
+            })
+        }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel))
+        
+        if let popover = alert.popoverPresentationController {
+            if let cell = self.tableView.cellForRow(at: IndexPath(row: 1, section: Section.display.rawValue)) {
+                popover.sourceView = cell
+                popover.sourceRect = cell.bounds
+            } else {
+                popover.sourceView = self.view
+                popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            }
+        }
+        
+        self.present(alert, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
@@ -1142,6 +1286,11 @@ extension SettingsViewController
                 tableView.deselectRow(at: indexPath, animated: true)
                 self.resolvePendingAccountActions()
             }
+        case .display:
+            if indexPath.row == 1 {
+                tableView.deselectRow(at: indexPath, animated: true)
+                self.presentLanguagePicker()
+            }
         case .appRefresh:
             let row = AppRefreshRow.allCases[indexPath.row]
             switch row
@@ -1208,6 +1357,9 @@ extension SettingsViewController
             case .developer: self.openTwitter(username: "sidestoreio")
             case .operations: self.openTwitter(username: "sidestoreio")
             case .designer: self.openTwitter(username: "lit_ritt")
+            case .chineseLocalization:
+                let url = URL(string: "https://github.com/KSLengYu")!
+                self.openWebURL(url, preferredTintColor: .altPrimary)
             case .softwareLicenses: break
             }
             
@@ -1221,7 +1373,11 @@ extension SettingsViewController
             switch row
             {
             case .sendFeedback:
-                let alertController = UIAlertController(title: "Send Feedback", message: "Choose a method to send feedback:", preferredStyle: .actionSheet)
+                let alertController = UIAlertController(
+                    title: NSLocalizedString("Send Feedback", comment: ""),
+                    message: NSLocalizedString("Choose a method to send feedback:", comment: ""),
+                    preferredStyle: .actionSheet
+                )
                 
                 // Option 1: GitHub
                 alertController.addAction(UIAlertAction(title: "GitHub", style: .default) { _ in
@@ -1235,7 +1391,7 @@ extension SettingsViewController
                 
                 #if !os(tvOS)
                 // Option 3: Mail
-                alertController.addAction(UIAlertAction(title: "Send Email", style: .default) { _ in
+                alertController.addAction(UIAlertAction(title: NSLocalizedString("Send Email", comment: ""), style: .default) { _ in
                     if MFMailComposeViewController.canSendMail() {
                         let mailViewController = MFMailComposeViewController()
                         mailViewController.mailComposeDelegate = self
@@ -1257,7 +1413,7 @@ extension SettingsViewController
                 #endif
                 
                 // Cancel action
-                alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
                 
                 // For iPad: Set the source view if presenting on iPad to avoid crashes
                 if let popoverController = alertController.popoverPresentationController {
@@ -1271,6 +1427,7 @@ extension SettingsViewController
             case .refreshSideJITServer:
                 let jitConfigView = SideJITServerConfigView()
                 let vc = UIHostingController(rootView: jitConfigView)
+                vc.title = NSLocalizedString("SideJITServer", comment: "")
                 #if !os(tvOS)
                 let appearance = UINavigationBarAppearance()
                 appearance.configureWithDefaultBackground()
@@ -1283,6 +1440,7 @@ extension SettingsViewController
             case .pairingFileManagement:
                 let pairingView = PairingFileManagementView()
                 let vc = UIHostingController(rootView: pairingView)
+                vc.title = NSLocalizedString("Pairing File Management", comment: "")
                 #if !os(tvOS)
                 let appearance = UINavigationBarAppearance()
                 appearance.configureWithDefaultBackground()
@@ -1297,12 +1455,15 @@ extension SettingsViewController
                     selected: UserDefaults.standard.menuAnisetteURL,
                     onResetAdiPb: { [weak self] in
                         guard let self = self else { return }
-                        ToastView(text: "Cleared adi.pb!", detailText: "You will need to log back into Apple ID in SideStore.")
-                            .show(in: self)
+                        ToastView(
+                            text: NSLocalizedString("Cleared adi.pb!", comment: ""),
+                            detailText: NSLocalizedString("You will need to log back into Apple ID in SideStore.", comment: "")
+                        ).show(in: self)
                     }
                 )
                 
                 let vc = UIHostingController(rootView: anisetteServersView)
+                vc.title = NSLocalizedString("Anisette Servers", comment: "")
                 self.prepare(for: UIStoryboardSegue(identifier: "anisetteServers", source: self, destination: vc), sender: nil)
 
             case .connectionConfig:

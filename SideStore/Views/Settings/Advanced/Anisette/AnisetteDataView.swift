@@ -498,7 +498,7 @@ struct AnisetteDataView: View {
                             DisclosureGroup(isExpanded: $showingServerHeaders) {
                                 VStack(alignment: .leading, spacing: 10) {
                                     HStack {
-                                        Text("Server: \(URL(string: UserDefaults.standard.menuAnisetteURL)?.host ?? "Active Server")")
+                                        Text(String(format: NSLocalizedString("Server: %@", comment: ""), URL(string: UserDefaults.standard.menuAnisetteURL)?.host ?? NSLocalizedString("Active Server", comment: "")))
                                             .font(.caption)
                                             .foregroundColor(Color.white.opacity(0.6))
                                         Spacer()
@@ -513,7 +513,7 @@ struct AnisetteDataView: View {
                                         } label: {
                                             HStack(spacing: 4) {
                                                 Image(systemName: isCopiedServer ? "checkmark" : "doc.on.doc")
-                                                Text(isCopiedServer ? "Copied" : "Copy")
+                                                Text(LocalizedStringKey(isCopiedServer ? "Copied" : "Copy"))
                                             }
                                             .font(.footnote.weight(.semibold))
                                             .foregroundColor(isCopiedServer ? .green : .accentColor)
@@ -717,7 +717,7 @@ struct AnisetteDataView: View {
     }
     
     private func sectionHeader(_ title: String) -> some View {
-        Text(title)
+        Text(NSLocalizedString(title, comment: ""))
             .font(.system(size: 13, weight: .semibold))
             .foregroundColor(Color.white.opacity(0.6))
             .padding(.horizontal, 16)
@@ -733,7 +733,7 @@ struct AnisetteDataView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text(title)
+                Text(NSLocalizedString(title, comment: ""))
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.white)
                 Spacer()
@@ -778,7 +778,7 @@ struct AnisetteDataView: View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 3) {
                 HStack {
-                    Text(title)
+                    Text(NSLocalizedString(title, comment: ""))
                         .font(.system(size: 15, weight: .bold))
                         .foregroundColor(.white)
                     Spacer()
@@ -786,7 +786,7 @@ struct AnisetteDataView: View {
                         .font(.system(size: 11, design: .monospaced))
                         .foregroundColor(Color.white.opacity(0.45))
                 }
-                Text(subtitle)
+                Text(NSLocalizedString(subtitle, comment: ""))
                     .font(.system(size: 12))
                     .foregroundColor(Color.white.opacity(0.55))
             }

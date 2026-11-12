@@ -59,7 +59,7 @@ struct OperationsLoggingControlView: View {
             VStack(alignment: .leading, spacing: 24) {
                 // Standalone Steps
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("STANDALONE STEPS")
+                    Text(NSLocalizedString("STANDALONE STEPS", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -78,7 +78,7 @@ struct OperationsLoggingControlView: View {
                 
                 // Pipeline Steps
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("PIPELINE STEPS")
+                    Text(NSLocalizedString("PIPELINE STEPS", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -100,7 +100,7 @@ struct OperationsLoggingControlView: View {
             .padding(.bottom, 32)
         }
         .background(Color(uiColor: .settingsBackground).ignoresSafeArea())
-        .navigationTitle("Operations Logging")
+        .navigationTitle(NSLocalizedString("Operations Logging", comment: ""))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
@@ -108,7 +108,7 @@ struct OperationsLoggingControlView: View {
 
     private func stepToggle(_ title: String, step: some OperationStep) -> some View {
         HStack {
-            Text(title)
+            Text(NSLocalizedString(title, comment: ""))
                 .font(.system(size: 17, weight: .bold))
                 .foregroundColor(.white)
                 .fixedSize(horizontal: false, vertical: true)

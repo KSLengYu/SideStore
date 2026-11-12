@@ -17,13 +17,20 @@ public actor SideSignConfigManager {
         return libraryDirectory.appendingPathComponent("sidesign-config.json")
     }
     
+    private nonisolated static func defaultHeaders() -> SideSignHeaders {
+        var headers = SideSignHeaders()
+        // Align GrandSlam User-Agent with akd client-info so GSA does not reject Xcode-tagged auth requests.
+        headers.grandSlam.userAgent = AppConstants.Anisette.defaultUserAgent
+        return headers
+    }
+
     public func loadConfig() -> SideSignHeaders {
         if let data = try? Data(contentsOf: configFileURL),
            let config = try? Foundation.JSONDecoder().decode(SideSignHeaders.self, from: data) {
             DeveloperPortal.shared.customHeaders = config
             return config
         }
-        let defaultConfig = SideSignHeaders()
+        let defaultConfig = Self.defaultHeaders()
         DeveloperPortal.shared.customHeaders = defaultConfig
         return defaultConfig
     }
@@ -33,7 +40,7 @@ public actor SideSignConfigManager {
            let config = try? Foundation.JSONDecoder().decode(SideSignHeaders.self, from: data) {
             DeveloperPortal.shared.customHeaders = config
         } else {
-            DeveloperPortal.shared.customHeaders = SideSignHeaders()
+            DeveloperPortal.shared.customHeaders = Self.defaultHeaders()
         }
     }
     
@@ -63,7 +70,7 @@ public actor SideSignConfigManager {
     @discardableResult
     public nonisolated func resetToDefaults() -> SideSignHeaders {
         deleteConfigFile()
-        let defaultConfig = SideSignHeaders()
+        let defaultConfig = Self.defaultHeaders()
         DeveloperPortal.shared.customHeaders = defaultConfig
         return defaultConfig
     }

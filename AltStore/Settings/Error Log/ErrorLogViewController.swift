@@ -45,6 +45,9 @@ final class ErrorLogViewController: UITableViewController
     {
         super.viewDidLoad()
         
+        self.title = NSLocalizedString("Error Log", comment: "")
+        self.navigationItem.title = NSLocalizedString("Error Log", comment: "")
+        
         self.tableView.dataSource = self.dataSource
         self.dataSource.contentView = self.tableView
         self.tableView.prefetchDataSource = self.dataSource
@@ -56,9 +59,13 @@ final class ErrorLogViewController: UITableViewController
             // Assign just clearLogButton to hide export button.
             self.navigationItem.rightBarButtonItems = [self.clearLogButton]
         }
-        
-//        // Adjust the width of the right bar button items
-//        adjustRightBarButtonWidth()
+    }
+    
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        self.title = NSLocalizedString("Error Log", comment: "")
+        self.navigationItem.title = NSLocalizedString("Error Log", comment: "")
     }
     
     

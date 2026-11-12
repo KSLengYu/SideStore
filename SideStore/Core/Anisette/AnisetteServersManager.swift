@@ -114,7 +114,11 @@ public actor AnisetteServersManager {
 
     public func getActiveServerURLs() -> [String] {
         let servers = loadLocalServers()
-        return servers.filter { !$0.isHidden }.map(\.address)
+        let active = servers.filter { !$0.isHidden }.map(\.address)
+        if active.isEmpty {
+            return [AppConstants.Anisette.Servers.defaultServerURL]
+        }
+        return active
     }
 
     // MARK: - Offline File Mode State Keys

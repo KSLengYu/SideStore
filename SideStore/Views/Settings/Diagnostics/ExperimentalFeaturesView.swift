@@ -21,7 +21,7 @@ struct ExperimentalFeaturesView: View {
             VStack(alignment: .leading, spacing: 24) {
                 // Section 1: STANDALONE FEATURES
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("STANDALONE FEATURES")
+                    Text(NSLocalizedString("STANDALONE FEATURES", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -30,7 +30,7 @@ struct ExperimentalFeaturesView: View {
                         if #available(iOS 26.0, *) {
                             NavigationLink(destination: WirelessPairView()) {
                                 HStack {
-                                    Text("Wireless Pairing")
+                                    Text(NSLocalizedString("Wireless Pairing", comment: ""))
                                         .font(.system(size: 17, weight: .bold))
                                         .foregroundColor(.white)
                                     Spacer()
@@ -47,7 +47,7 @@ struct ExperimentalFeaturesView: View {
                         
                         NavigationLink(destination: CacheManagementView()) {
                             HStack {
-                                Text("Cache Management")
+                                Text(NSLocalizedString("Cache Management", comment: ""))
                                     .font(.system(size: 17, weight: .bold))
                                     .foregroundColor(.white)
                                 Spacer()
@@ -65,7 +65,7 @@ struct ExperimentalFeaturesView: View {
 
                 // Section 2: MINIMUXER
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("MINIMUXER")
+                    Text(NSLocalizedString("MINIMUXER", comment: ""))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
@@ -88,7 +88,7 @@ struct ExperimentalFeaturesView: View {
             .padding(.bottom, 32)
         }
         .background(Color(uiColor: .settingsBackground).ignoresSafeArea())
-        .navigationTitle("Experimental Features")
+        .navigationTitle(NSLocalizedString("Experimental Features", comment: ""))
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
@@ -96,7 +96,7 @@ struct ExperimentalFeaturesView: View {
 
     private func toggleRow(title: String, isOn: Binding<Bool>) -> some View {
         HStack {
-            Text(title)
+            Text(NSLocalizedString(title, comment: ""))
                 .font(.system(size: 17, weight: .bold))
                 .foregroundColor(.white)
                 .fixedSize(horizontal: false, vertical: true)

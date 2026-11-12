@@ -76,6 +76,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
+        SideStoreLanguageManager.setup()
+        
         // navigation bar buttons spacing is too much (so hack it to use minimal spacing)
         // this is swift-5 specific behavior and might change
         // https://stackoverflow.com/a/64988363/11971304
@@ -132,6 +134,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         SideStoreLogging.setLogging(UserDefaults.standard.isSideStoreVerboseLoggingEnabled)
         AltSign.setLogging(UserDefaults.standard.isAltSignVerboseLoggingEnabled)
         minimuxerSetLogging(UserDefaults.standard.isMinimuxerVerboseLoggingEnabled)
+        AnisetteProvider.migrateLegacyAnisetteDefaultsIfNeeded()
         SideSignConfigManager.shared.applyConfigToDeveloperPortal()
 
         // Override point for customization after application launch.

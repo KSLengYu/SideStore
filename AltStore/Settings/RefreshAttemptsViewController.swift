@@ -34,6 +34,15 @@ final class RefreshAttemptsViewController: UITableViewController
         
         self.tableView.dataSource = self.dataSource
         self.dataSource.contentView = self.tableView
+        self.title = NSLocalizedString("Refresh Attempts", comment: "")
+        self.navigationItem.title = NSLocalizedString("Refresh Attempts", comment: "")
+    }
+
+    override func viewWillAppear(_ animated: Bool)
+    {
+        super.viewWillAppear(animated)
+        self.title = NSLocalizedString("Refresh Attempts", comment: "")
+        self.navigationItem.title = NSLocalizedString("Refresh Attempts", comment: "")
     }
 }
 
@@ -49,7 +58,11 @@ private extension RefreshAttemptsViewController
         dataSource.cellConfigurationHandler = { [weak self] (cell, attempt, indexPath) in
             let cell = cell as! RefreshAttemptTableViewCell
             cell.dateLabel.text = self?.dateFormatter.string(from: attempt.date)
-            cell.errorDescriptionLabel.text = attempt.errorDescription
+            if let err = attempt.errorDescription, !err.isEmpty {
+                cell.errorDescriptionLabel.text = NSLocalizedString(err, comment: "")
+            } else {
+                cell.errorDescriptionLabel.text = nil
+            }
             
             if attempt.isSuccess
             {

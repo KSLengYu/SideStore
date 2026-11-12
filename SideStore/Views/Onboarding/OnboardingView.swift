@@ -530,6 +530,8 @@ private struct AppleIDStep: View {
     @State private var isAuthenticated = AuthManager.shared.isAuthenticated
     @State private var isSigningIn = false
     @State private var errorMessage: String? = nil
+    @State private var offerRecoveryButton = false
+    @State private var showAnisetteRecoveryAlert = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -575,11 +577,18 @@ private struct AppleIDStep: View {
                                 skipResign: true,
                                 skipHowTos: true
                             )
+                            AuthManager.consecutiveSignInFailures = 0
+                            offerRecoveryButton = false
                             isAuthenticated = true
                             onNext()
                         } catch {
                             if !(error is CancellationError) {
                                 errorMessage = error.localizedDescription
+                                AuthManager.consecutiveSignInFailures += 1
+                                if AuthManager.consecutiveSignInFailures >= 7 || AuthManager.isAnisetteOrLoginRecoveryError(error) {
+                                    offerRecoveryButton = true
+                                    showAnisetteRecoveryAlert = true
+                                }
                             }
                         }
                     }
@@ -606,11 +615,44 @@ private struct AppleIDStep: View {
                 .padding(.horizontal, 32)
 
                 if let errorMessage {
-                    Text(errorMessage)
-                        .font(.footnote)
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 16)
+                    VStack(spacing: 8) {
+                        Text(errorMessage)
+                            .font(.footnote)
+                            .foregroundColor(.red)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 16)
+
+                        if offerRecoveryButton {
+                            SwiftUI.Button(action: {
+                                Task {
+                                    await AuthManager.resetAnisetteAndDisableODAForRecovery()
+                                    offerRecoveryButton = false
+                                    self.errorMessage = NSLocalizedString("On-Device Anisette turned off and adi.pb reset. Please try signing in again.", comment: "")
+                                }
+                            }) {
+                                Text(NSLocalizedString("Disable ODA, Reset adi.pb & Retry", comment: ""))
+                                    .font(.footnote)
+                                    .bold()
+                                    .foregroundColor(.accentColor)
+                            }
+                        }
+                    }
+                    .alert(NSLocalizedString("Sign-In Recovery Recommended", comment: ""), isPresented: $showAnisetteRecoveryAlert) {
+                        SwiftUI.Button(NSLocalizedString("Disable ODA & Reset adi.pb", comment: ""), role: .destructive) {
+                            Task {
+                                await AuthManager.resetAnisetteAndDisableODAForRecovery()
+                                offerRecoveryButton = false
+                                self.errorMessage = NSLocalizedString("On-Device Anisette turned off and adi.pb reset. Please try signing in again.", comment: "")
+                            }
+                        }
+                        SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {
+                            if AuthManager.consecutiveSignInFailures >= 7 {
+                                AuthManager.consecutiveSignInFailures = 0
+                            }
+                        }
+                    } message: {
+                        Text(NSLocalizedString("Multiple Apple ID sign-in failures (or an Anisette / -80045 error) were detected. Turning off On-Device Anisette, switching to a working Mac Anisette server, and resetting adi.pb usually resolves this.\n\nApply this fix now?", comment: ""))
+                    }
                 }
             }
 

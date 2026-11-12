@@ -87,23 +87,25 @@ struct UserCustomizationsView: View {
                         .foregroundColor(Color.white.opacity(0.6))
                         .padding(.horizontal, 16)
                     
-                    NavigationLink(destination: ThemePickerView()) {
-                        HStack {
-                            Text("Theme Manager")
-                                .font(.system(size: 17, weight: .bold))
-                                .foregroundColor(.white)
-                            Spacer()
-                            HStack(spacing: 6) {
-                                Circle()
-                                    .fill(Color(uiColor: ThemeManager.shared.primaryColor))
-                                    .frame(width: 14, height: 14)
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(Color.white.opacity(0.4))
+                    VStack(spacing: 0) {
+                        NavigationLink(destination: ThemePickerView()) {
+                            HStack {
+                                Text("Theme Manager")
+                                    .font(.system(size: 17, weight: .bold))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                HStack(spacing: 6) {
+                                    Circle()
+                                        .fill(Color(uiColor: ThemeManager.shared.primaryColor))
+                                        .frame(width: 14, height: 14)
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(Color.white.opacity(0.4))
+                                }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
                     }
                     .background(Color.settingsRowBackground)
                     .cornerRadius(14)
@@ -407,10 +409,10 @@ struct UserCustomizationsView: View {
                             }) {
                                 HStack {
                                     VStack(alignment: .leading, spacing: 3) {
-                                        Text(mode.displayName)
+                                        Text(NSLocalizedString(mode.displayName, comment: ""))
                                             .font(.system(size: 17, weight: .bold))
                                             .foregroundColor(isBackgroundServiceEnabled ? .white : Color.white.opacity(0.4))
-                                        Text(mode.subtitle)
+                                        Text(NSLocalizedString(mode.subtitle, comment: ""))
                                             .font(.system(size: 13))
                                             .foregroundColor(Color.white.opacity(isBackgroundServiceEnabled ? 0.6 : 0.3))
                                     }
@@ -480,7 +482,7 @@ struct UserCustomizationsView: View {
         } message: {
             Text("Changing the Minimuxer backend requires restarting SideStore. If canceled, changes will not be saved.")
         }
-        .alert(pendingPreferIPAOngoing ? "Prefer Resigned IPA" : "Prefer App Bundle", isPresented: $showPreferIPAToggleAlert) {
+        .alert(LocalizedStringKey(pendingPreferIPAOngoing ? "Prefer Resigned IPA" : "Prefer App Bundle"), isPresented: $showPreferIPAToggleAlert) {
             SwiftUI.Button("Switch") {
                 preferResignedIPA = pendingPreferIPAOngoing
                 UserDefaults.standard.preferResignedIPA = pendingPreferIPAOngoing
@@ -504,7 +506,7 @@ struct UserCustomizationsView: View {
             }
         }
         .alert(
-            editDialog?.title ?? "",
+            editDialog != nil ? NSLocalizedString(editDialog!.title, comment: "") : "",
             isPresented: Binding<Bool>(
                 get: { editDialog != nil },
                 set: { if !$0 { editDialog = nil } }
@@ -514,17 +516,17 @@ struct UserCustomizationsView: View {
                 #if !os(tvOS)
                 .keyboardType(editDialog?.keyboardType ?? .default)
                 #endif
-            SwiftUI.Button("OK") {
+            SwiftUI.Button(NSLocalizedString("OK", comment: "")) {
                 if let dialog = editDialog {
                     dialog.onSave(editingValueText)
                 }
                 editDialog = nil
             }
-            SwiftUI.Button("Cancel", role: .cancel) {
+            SwiftUI.Button(NSLocalizedString("Cancel", comment: ""), role: .cancel) {
                 editDialog = nil
             }
         } message: {
-            Text(editDialog?.message ?? "")
+            Text(editDialog != nil ? NSLocalizedString(editDialog!.message, comment: "") : "")
         }
         .task {
             isFreeAccount = (try? await AuthManager.shared.getAuthenticatedTeam())?.type == .free
@@ -534,12 +536,12 @@ struct UserCustomizationsView: View {
     private func toggleRow(title: String, subtitle: String? = nil, isOn: Binding<Bool>) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(title)
+                Text(NSLocalizedString(title, comment: ""))
                     .font(.system(size: 17, weight: .bold))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
                 if let subtitle = subtitle {
-                    Text(subtitle)
+                    Text(NSLocalizedString(subtitle, comment: ""))
                         .font(.system(size: 12, weight: .regular))
                         .foregroundColor(Color.white.opacity(0.6))
                         .fixedSize(horizontal: false, vertical: true)
@@ -566,12 +568,12 @@ struct UserCustomizationsView: View {
         SwiftUI.Button(action: onTap) {
             VStack(alignment: .leading, spacing: 6) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
+                    Text(NSLocalizedString(title, comment: ""))
                         .font(.system(size: 17, weight: .bold))
                         .foregroundColor(.white)
                         .fixedSize(horizontal: false, vertical: true)
                     if let subtitle = subtitle {
-                        Text(subtitle)
+                        Text(NSLocalizedString(subtitle, comment: ""))
                             .font(.system(size: 12, weight: .regular))
                             .foregroundColor(Color.white.opacity(0.6))
                             .fixedSize(horizontal: false, vertical: true)
@@ -815,7 +817,7 @@ struct UserCustomizationsView: View {
                     Spacer()
                     Picker("", selection: customizeAppExtensionsBinding) {
                         ForEach(AppExtensionCustomization.allCases) { (option: AppExtensionCustomization) in
-                            Text(option.displayName).tag(option)
+                            Text(NSLocalizedString(option.displayName, comment: "")).tag(option)
                         }
                     }
                     .pickerStyle(.menu)
@@ -834,7 +836,7 @@ struct UserCustomizationsView: View {
                     Spacer()
                     Picker("", selection: appImportSourceModeBinding) {
                         ForEach(AppImportSourceMode.allCases) { (option: AppImportSourceMode) in
-                            Text(option.displayName).tag(option)
+                            Text(NSLocalizedString(option.displayName, comment: "")).tag(option)
                         }
                     }
                     .pickerStyle(.menu)

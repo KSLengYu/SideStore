@@ -26,10 +26,10 @@ struct HealthCheckView: View {
                             Text("SideStore Ready")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text(viewModel.connectionMode == .localVPN
+                            Text(LocalizedStringKey(viewModel.connectionMode == .localVPN
                                  ? "All requirements met. Local device pairing & VPN tunnel active."
                                  : "All requirements met. Local device pairing & Remote server connection active."
-                            )
+                            ))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -40,7 +40,7 @@ struct HealthCheckView: View {
                             Text("Action Required")
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            Text(err.localizedDescription)
+                            Text(formatHealthCheckError(err))
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -107,7 +107,7 @@ struct HealthCheckView: View {
                 HStack {
                     Text("Connection Mode")
                     Spacer()
-                    Text(viewModel.connectionMode == .localVPN ? "Local VPN" : "Remote Server")
+                    Text(LocalizedStringKey(viewModel.connectionMode == .localVPN ? "Local VPN" : "Remote Server"))
                         .foregroundColor(.secondary)
                 }
                 
@@ -118,13 +118,13 @@ struct HealthCheckView: View {
                     HStack {
                         Text("Override Status")
                         Spacer()
-                        Text(viewModel.overrideTunnelPeerEffective ? "Active" : "Inactive")
+                        Text(LocalizedStringKey(viewModel.overrideTunnelPeerEffective ? "Active" : "Inactive"))
                             .foregroundColor(viewModel.overrideTunnelPeerEffective ? .green : .secondary)
                     }
                     HStack {
                         Text("Active Protocol")
                         Spacer()
-                        Text(viewModel.activeProtocol)
+                        Text(NSLocalizedString(viewModel.activeProtocol, comment: ""))
                             .foregroundColor(.secondary)
                     }
                 } else {
@@ -132,7 +132,7 @@ struct HealthCheckView: View {
                     HStack {
                         Text("Active Protocol")
                         Spacer()
-                        Text(viewModel.activeProtocol)
+                        Text(NSLocalizedString(viewModel.activeProtocol, comment: ""))
                             .foregroundColor(.secondary)
                     }
                 }
@@ -170,6 +170,34 @@ struct HealthCheckView: View {
             await viewModel.observeMetrics()
         }
     }
+    
+    private func formatHealthCheckError(_ err: Error) -> String {
+        let desc = err.localizedDescription
+        let translated = NSLocalizedString(desc, comment: "")
+        if translated != desc {
+            return translated
+        }
+        if desc.contains("No wifi interface satisfied") {
+            return NSLocalizedString("NoConnection: No wifi interface satisfied", comment: "")
+        }
+        if desc.hasPrefix("NoConnection:") {
+            let detail = desc.dropFirst("NoConnection:".count).trimmingCharacters(in: .whitespaces)
+            return NSLocalizedString("No Connection", comment: "") + ": " + NSLocalizedString(detail, comment: "")
+        }
+        if desc.hasPrefix("NoVPN:") {
+            let detail = desc.dropFirst("NoVPN:".count).trimmingCharacters(in: .whitespaces)
+            return NSLocalizedString("VPN Disconnected", comment: "") + ": " + NSLocalizedString(detail, comment: "")
+        }
+        if desc.hasPrefix("NotReachable:") {
+            let detail = desc.dropFirst("NotReachable:".count).trimmingCharacters(in: .whitespaces)
+            return NSLocalizedString("Unreachable", comment: "") + ": " + NSLocalizedString(detail, comment: "")
+        }
+        if desc.hasPrefix("PairingNotLoaded:") {
+            let detail = desc.dropFirst("PairingNotLoaded:".count).trimmingCharacters(in: .whitespaces)
+            return NSLocalizedString("Pairing file not loaded", comment: "") + ": " + NSLocalizedString(detail, comment: "")
+        }
+        return desc
+    }
 }
 
 struct DependencyRow: View {
@@ -181,9 +209,9 @@ struct DependencyRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(NSLocalizedString(title, comment: ""))
                     .font(.body)
-                Text(subtitle)
+                Text(NSLocalizedString(subtitle, comment: ""))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -217,9 +245,9 @@ struct ConfigRow: View {
     
     var body: some View {
         HStack {
-            Text(label)
+            Text(NSLocalizedString(label, comment: ""))
             Spacer()
-            Text(value ?? "N/A")
+            Text(NSLocalizedString(value ?? "N/A", comment: ""))
                 .foregroundColor(.secondary)
         }
     }

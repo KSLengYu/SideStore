@@ -46,9 +46,9 @@ class ErrorProcessing {
     }
 
     private func processError(_ error: NSError, ignoreTitle: Bool = false, getMoreErrors: (_ error: NSError)->String) -> String{
-        // if unique was requested and if this error is duplicate, ignore processing it
-        let serializedError = "\(error)"
-        if unique && errors.contains(serializedError) {
+        let serializedError = "\(error.domain):\(error.code):\(error.localizedDescription)"
+        // Always prevent recursion cycles regardless of unique flag
+        if errors.contains(serializedError) {
             return ""
         }
         errors.insert(serializedError)    // mark this as processed
@@ -60,40 +60,40 @@ class ErrorProcessing {
                 title = !ignoreTitle ? (error.localizedTitle.map{$0+"\n"} ?? "") : ""
                 desc = userFriendlyDescription(for: error)
             case .fullError:
-                desc = serializedError
+                desc = "\(error)"
         }
-        var moreErrors = getMoreErrors(error)
-        moreErrors = moreErrors == "" ? "" : "\n" + moreErrors
-        return title + desc + moreErrors
+        let moreErrors = getMoreErrors(error)
+        let formattedMore = moreErrors.isEmpty ? "" : "\n" + moreErrors
+        return title + desc + formattedMore
     }
 
     func getDescription(error: NSError) -> String{
         errors = []  // reinit for each request
-        return getDescriptionText(error: error)
+        return getDescriptionText(error: error, 0)
     }
     
-    
-    func getDescriptionText(error: NSError,_ depth: Int = 0) -> String{
+    func getDescriptionText(error: NSError, _ depth: Int = 0) -> String{
+        guard depth < 6 else { return "" }
+        
         // closure
-        let recurseErrors = { error in
-            self.getDescriptionText(error: error, depth+1)
+        let recurseErrors = { (err: NSError) in
+            self.getDescriptionText(error: err, depth + 1)
         }
         
         var description = ""
-        // process current error only if recur was not requested
-        let processMoreErrors = recur ? recurseErrors : {_ in ""}
+        // process current error only if recur was requested
+        let processMoreErrors = recur ? recurseErrors : { (_: NSError) in "" }
         
         let underlyingErrors = error.underlyingErrors
         if let wrappedError = (error as? ALTWrappedError)?.wrappedError {
             description += getDescriptionText(error: wrappedError, depth + 1)
         } else if !underlyingErrors.isEmpty {
-            description += underlyingErrors.map{ error in
-                let error = error as NSError
-                return processError(error, getMoreErrors: processMoreErrors)
+            description += underlyingErrors.compactMap { err in
+                let nsErr = err as NSError
+                return processError(nsErr, getMoreErrors: processMoreErrors)
             }.joined(separator: "\n")
-        } else if let underlyingError = error.underlyingError as? NSError {
-            let error = underlyingError as NSError
-            description += processError(error, getMoreErrors: processMoreErrors)
+        } else if let underlyingError = error.underlyingError as? NSError, underlyingError !== error {
+            description += processError(underlyingError, getMoreErrors: processMoreErrors)
         } else {
             // ignore the title for the base error since we wanted this to be description
             let isBaseError = (depth == 0)
